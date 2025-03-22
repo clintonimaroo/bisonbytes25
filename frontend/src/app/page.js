@@ -155,10 +155,18 @@ export default function Home() {
               setIsListening(true);
 
               // Restart recognition to clear buffer
-              recognition.stop();
-              setTimeout(() => {
-                recognition.start();
-              }, 500);
+              try {
+                recognition.stop();
+                setTimeout(() => {
+                  try {
+                    recognition.start();
+                  } catch (error) {
+                    console.error('Error restarting recognition after wake word:', error);
+                  }
+                }, 500);
+              } catch (error) {
+                console.error('Error stopping recognition after wake word:', error);
+              }
             }
           } else if (isProcessingCommand) {
             // Process the actual command after wake word
@@ -182,13 +190,46 @@ export default function Home() {
         recognition.onend = () => {
           // Restart recognition if it's in wake word mode
           if (isWakeWordMode) {
-            recognition.start();
+            try {
+              recognition.start();
+            } catch (error) {
+              console.error('Error restarting recognition in onend handler:', error);
+              // If we failed to restart, try again after a short delay
+              setTimeout(() => {
+                try {
+                  recognition.start();
+                } catch (innerError) {
+                  console.error('Failed to restart recognition after delay:', innerError);
+                }
+              }, 300);
+            }
+          }
+        };
+
+        recognition.onerror = (event) => {
+          console.error('Speech recognition error:', event.error);
+          // Handle specific error types
+          if (event.error === 'aborted' || event.error === 'network') {
+            // These errors might require a restart
+            setTimeout(() => {
+              try {
+                if (isWakeWordMode) {
+                  recognition.start();
+                }
+              } catch (error) {
+                console.error('Error restarting after recognition error:', error);
+              }
+            }, 500);
           }
         };
 
         // Start listening for wake word
         if (isWakeWordMode) {
-          recognition.start();
+          try {
+            recognition.start();
+          } catch (error) {
+            console.error('Error starting initial recognition:', error);
+          }
         }
       } else {
         console.error('SpeechRecognition is not supported in this browser');
@@ -198,21 +239,51 @@ export default function Home() {
     return () => {
       // Clean up
       if (recognitionRef.current) {
-        recognitionRef.current.stop();
+        try {
+          recognitionRef.current.stop();
+        } catch (error) {
+          console.error('Error stopping recognition on cleanup:', error);
+        }
       }
     };
   }, [isWakeWordMode, isProcessingCommand]);
 
   const startRecognition = () => {
     if (recognitionRef.current) {
-      recognitionRef.current.start();
+      try {
+        // Check if recognition is already running
+        if (isListening) {
+          console.log('Recognition is already running, no need to start again');
+          return;
+        }
+        recognitionRef.current.start();
+      } catch (error) {
+        console.error('Error starting recognition:', error);
+        // If recognition is already running and we get an error, try stopping first
+        try {
+          recognitionRef.current.stop();
+          setTimeout(() => {
+            try {
+              recognitionRef.current.start();
+            } catch (innerError) {
+              console.error('Error restarting recognition after stop:', innerError);
+            }
+          }, 300);
+        } catch (stopError) {
+          console.error('Error stopping recognition before restart:', stopError);
+        }
+      }
     }
   };
 
   const stopRecognition = () => {
     if (recognitionRef.current) {
-      setEndText(true)
-      recognitionRef.current.stop();
+      setEndText(true);
+      try {
+        recognitionRef.current.stop();
+      } catch (error) {
+        console.error('Error stopping recognition:', error);
+      }
     }
   };
 
