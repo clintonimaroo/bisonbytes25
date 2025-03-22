@@ -77,244 +77,165 @@ export default function Home() {
   const [nodeDetails, setNodeDetails] = useState(null)
   const [nodeDetailsVisible, setNodeDetailsVisible] = useState(false)
   const [nodeFullScreen, setNodeFullScreen] = useState(false)
-  const [isWakeWordMode, setIsWakeWordMode] = useState(true);
-  const [isProcessingCommand, setIsProcessingCommand] = useState(false);
+  const [wakeWordDetected, setWakeWordDetected] = useState(false);
   const recognitionRef = useRef(null);
   const wakeWordAudioRef = useRef(null);
+  const recognitionActive = useRef(false);
 
-  // async function generateRoadmap(){
-  //   setLoader(true)
-  //   axios.post("http://localhost:4555/generate-roadmap",{
-  //     "concept":transcript
-  //   }).then(
-  //     res=>{
-  //       setRoadmap(res.data)
-  //       setLoader(false)
-  //     }
-  //   )
-  // }
   const svg_btn_color = transcript.length == 0 ? "#8e939c" : "#fff"
-  // useEffect(() => {
-  //   const speechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  //   const recognition = new speechRecognition();
 
-  //   recognition.continuous = true;
-  //   recognition.interimResults = true;
-  //   recognition.lang = 'en-US';
-
-  //   recognition.onresult = (event) => {
-  //     const current = event.resultIndex;
-  //     const result = event.results[current][0];
-  //     if (result.isFinal && result.confidence > 0.7) {
-  //       setTranscript(prevTranscript => prevTranscript + ' ' + result.transcript);
-  //     }
-  //   };
-
-  //   if (isListening) {
-  //     recognition.start();
-  //   } else {
-  //     recognition.stop();
-  //   }
-
-  //   return () => {
-  //     recognition.stop();
-  //   };
-  // }, [isListening]);
-
-  // const toggleListening = () => {
-  //   setIsListening(!isListening);
-
-  // };
-  const [endText, setEndText] = useState(false)
-
+  // Initialize speech recognition
   useEffect(() => {
     if (typeof window !== 'undefined') {
       // Create wake word audio element
       wakeWordAudioRef.current = new Audio('/wake-word.mp3');
 
-      if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-        recognitionRef.current = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-
+      // Create speech recognition instance only once
+      if (('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) && !recognitionRef.current) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognitionRef.current = new SpeechRecognition();
         const recognition = recognitionRef.current;
+
         recognition.lang = 'en-US';
         recognition.continuous = true;
         recognition.interimResults = true;
 
-        recognition.onresult = (event) => {
-          const last = event.results.length - 1;
-          const text = event.results[last][0].transcript;
-          console.log('Recognized text:', text);
-
-          if (isWakeWordMode) {
-            // Check for wake word in continuous listening mode
-            if (text.toLowerCase().includes('hey buddy')) {
-              console.log('Wake word detected: "Hey Buddy"');
-              wakeWordAudioRef.current.play(); // Play notification sound
-              setIsWakeWordMode(false);
-              setIsProcessingCommand(true);
-              setIsListening(true);
-
-              // Restart recognition to clear buffer
-              try {
-                recognition.stop();
-                setTimeout(() => {
-                  try {
-                    recognition.start();
-                  } catch (error) {
-                    console.error('Error restarting recognition after wake word:', error);
-                  }
-                }, 500);
-              } catch (error) {
-                console.error('Error stopping recognition after wake word:', error);
-              }
-            }
-          } else if (isProcessingCommand) {
-            // Process the actual command after wake word
-            console.log('Processing command:', text);
-            setTranscript(text);
-
-            // If the command has stopped for a moment, process it
-            if (event.results[last].isFinal) {
-              setIsProcessingCommand(false);
-              // Wait a bit and go back to wake word mode
-              setTimeout(() => {
-                if (text.trim().length > 0) {
-                  generateRoadmap();
-                }
-                setIsWakeWordMode(true);
-              }, 1000);
-            }
-          }
+        recognition.onstart = () => {
+          console.log('Speech recognition started');
+          recognitionActive.current = true;
         };
 
         recognition.onend = () => {
-          // Restart recognition if it's in wake word mode
-          if (isWakeWordMode) {
-            try {
-              recognition.start();
-            } catch (error) {
-              console.error('Error restarting recognition in onend handler:', error);
-              // If we failed to restart, try again after a short delay
-              setTimeout(() => {
-                try {
-                  recognition.start();
-                } catch (innerError) {
-                  console.error('Failed to restart recognition after delay:', innerError);
-                }
-              }, 300);
-            }
+          console.log('Speech recognition ended');
+          recognitionActive.current = false;
+
+          // Auto-restart if we should be listening but recognition stopped
+          if (isListening) {
+            console.log('Restarting speech recognition because isListening is true');
+            setTimeout(() => {
+              safeStartRecognition();
+            }, 300);
           }
         };
 
         recognition.onerror = (event) => {
           console.error('Speech recognition error:', event.error);
-          // Handle specific error types
-          if (event.error === 'aborted' || event.error === 'network') {
-            // These errors might require a restart
+          recognitionActive.current = false;
+
+          // Try to restart on certain errors
+          if (isListening && ['network', 'aborted', 'no-speech'].includes(event.error)) {
+            console.log('Restarting after error:', event.error);
             setTimeout(() => {
-              try {
-                if (isWakeWordMode) {
-                  recognition.start();
-                }
-              } catch (error) {
-                console.error('Error restarting after recognition error:', error);
-              }
-            }, 500);
+              safeStartRecognition();
+            }, 1000);
           }
         };
 
-        // Start listening for wake word
-        if (isWakeWordMode) {
-          try {
-            recognition.start();
-          } catch (error) {
-            console.error('Error starting initial recognition:', error);
+        recognition.onresult = (event) => {
+          const last = event.results.length - 1;
+          const text = event.results[last][0].transcript.toLowerCase().trim();
+          console.log('Recognized:', text, 'Final:', event.results[last].isFinal);
+
+          // Check for wake word "hey buddy"
+          if (!wakeWordDetected && text.includes('hey buddy')) {
+            console.log('Wake word detected!');
+            setWakeWordDetected(true);
+            setIsListening(true);
+
+            // Play sound to indicate wake word detected
+            wakeWordAudioRef.current.play().catch(err => console.error('Error playing audio:', err));
+
+            // Clear previous transcript
+            setTranscript('');
+
+            // Restart recognition to clear buffer
+            safeStopRecognition();
+            setTimeout(() => {
+              safeStartRecognition();
+            }, 500);
           }
-        }
-      } else {
-        console.error('SpeechRecognition is not supported in this browser');
+          // Process command after wake word detected
+          else if (wakeWordDetected && event.results[last].isFinal) {
+            console.log('Processing command:', text);
+
+            // Don't include "hey buddy" in the command
+            const command = text.replace('hey buddy', '').trim();
+            setTranscript(command);
+
+            // If command is complete, process it
+            if (command.length > 0) {
+              // Process after a short delay to ensure we got the complete command
+              setTimeout(() => {
+                setWakeWordDetected(false);
+                generateRoadmap();
+              }, 1000);
+            }
+          }
+        };
       }
     }
 
     return () => {
-      // Clean up
-      if (recognitionRef.current) {
-        try {
-          recognitionRef.current.stop();
-        } catch (error) {
-          console.error('Error stopping recognition on cleanup:', error);
-        }
-      }
+      // Clean up on component unmount
+      safeStopRecognition();
     };
-  }, [isWakeWordMode, isProcessingCommand]);
+  }, []);
 
-  const startRecognition = () => {
-    if (recognitionRef.current) {
-      try {
-        // Check if recognition is already running
-        if (isListening) {
-          console.log('Recognition is already running, no need to start again');
-          return;
-        }
-        recognitionRef.current.start();
-      } catch (error) {
-        console.error('Error starting recognition:', error);
-        // If recognition is already running and we get an error, try stopping first
-        try {
-          recognitionRef.current.stop();
-          setTimeout(() => {
-            try {
-              recognitionRef.current.start();
-            } catch (innerError) {
-              console.error('Error restarting recognition after stop:', innerError);
-            }
-          }, 300);
-        } catch (stopError) {
-          console.error('Error stopping recognition before restart:', stopError);
-        }
-      }
-    }
-  };
-
-  const stopRecognition = () => {
-    if (recognitionRef.current) {
-      setEndText(true);
-      try {
-        recognitionRef.current.stop();
-      } catch (error) {
-        console.error('Error stopping recognition:', error);
-      }
-    }
-  };
-
-  async function toggleListening() {
+  // Effect to start/stop recognition based on listening state
+  useEffect(() => {
     if (isListening) {
-      stopRecognition();
-      setIsListening(false);
-      setIsWakeWordMode(true);
+      safeStartRecognition();
     } else {
-      setIsWakeWordMode(false);
-      setIsProcessingCommand(true);
-      startRecognition();
-      setIsListening(true);
+      safeStopRecognition();
     }
-  }
+  }, [isListening]);
+
+  // Safe wrapper for starting recognition
+  const safeStartRecognition = () => {
+    if (!recognitionRef.current || recognitionActive.current) return;
+
+    try {
+      recognitionRef.current.start();
+      console.log('Started recognition');
+    } catch (error) {
+      console.error('Error starting recognition:', error);
+      recognitionActive.current = false;
+    }
+  };
+
+  // Safe wrapper for stopping recognition
+  const safeStopRecognition = () => {
+    if (!recognitionRef.current || !recognitionActive.current) return;
+
+    try {
+      recognitionRef.current.stop();
+      console.log('Stopped recognition');
+    } catch (error) {
+      console.error('Error stopping recognition:', error);
+    }
+  };
+
+  // Toggle listening manually with the mic button
+  const toggleListening = () => {
+    setIsListening(!isListening);
+    setWakeWordDetected(false);
+  };
 
   useEffect(() => {
     socket.on('stream', (data) => {
       try {
-
         setRoadmap(treeToGraph([JSON.parse(data)]));
       }
       catch (e) {
         console.log(e)
       }
-
     });
+
     socket.on('done_stream', (data) => {
       console.log('final_data', roadmap)
       setLoader(false)
     })
+
     socket.on('error', (error) => {
       console.error('Error:', error);
     });
@@ -337,7 +258,6 @@ export default function Home() {
   }
 
   const generateRoadmap = () => {
-    // socket.emit("message",transcript)
     if (transcript.trim().length === 0) return;
 
     setLoader(true)
