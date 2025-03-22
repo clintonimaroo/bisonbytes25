@@ -36,6 +36,29 @@ $border-color: #e5e7eb;
     }
 }
 
+.chat-history {
+    padding: 10px; // Add padding around the chat history section
+
+    h3 {
+        margin-bottom: 10px; // Space between title and items
+        font-size: 1.2em; // Adjust font size for the section title
+    }
+
+    .chat-history-item {
+        white-space: nowrap;        // Prevents text from wrapping
+        overflow: hidden;           // Hides overflow text
+        text-overflow: ellipsis;    // Displays ellipsis for overflow text
+        max-width: 100%;            // Set max width to fill available space
+        padding: 8px;              // Add padding for better spacing
+        cursor: pointer;           // Change cursor to pointer for interactivity
+        transition: background-color 0.3s; // Smooth background transition
+
+        &:hover {
+            background-color: #f0f0f0; // Change background on hover
+        }
+    }
+}
+
 :root {
     --tw-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -4px rgba(0, 0, 0, .1);
     --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
