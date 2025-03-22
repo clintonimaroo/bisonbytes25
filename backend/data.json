@@ -1,192 +1,177 @@
-{
-  "title": "Introduction to Machine Learning",
-  "children": [
-    {
-      "title": "Basic Concepts",
-      "children": [
+
+
+        
         {
-          "title": "What is Machine Learning?",
-          "children": [] 
-        },
-        {
-          "title": "Types of Machine Learning",
+          "title": "Introduction to Pasta Bolognese",
           "children": [
             {
-              "title": "Supervised Learning",
-              "children": []
+              "title": "Understanding Ingredients",
+              "children": [
+                {
+                  "title": "Essential Ingredients",
+                  "children": [
+                    {
+                      "title": "Meat Selection",
+                      "children": []
+                    },
+                    {
+                      "title": "Tomatoes Selection",
+                      "children": []
+                    },
+                    {
+                      "title": "Herbs and Spices",
+                      "children": []
+                    },
+                    {
+                      "title": "Pasta Types",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "title": "Finding Quality Ingredients",
+                  "children": [
+                    {
+                      "title": "Local Farmers' Market",
+                      "children": []
+                    },
+                    {
+                      "title": "Grocery Store Selection",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             },
             {
-              "title": "Unsupervised Learning",
-              "children": []
+              "title": "Basic Cooking Techniques",
+              "children": [
+                {
+                  "title": "Preparing Ingredients",
+                  "children": [
+                    {
+                      "title": "Chopping and Dicing",
+                      "children": []
+                    },
+                    {
+                      "title": "Browning Meat",
+                      "children": []
+                    },
+                    {
+                      "title": "Simmering Sauce",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "title": "Essential Cooking Equipment",
+                  "children": [
+                    {
+                      "title": "Choosing the Right Pan",
+                      "children": []
+                    },
+                    {
+                      "title": "Kitchen Utensils",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             },
             {
-              "title": "Reinforcement Learning",
-              "children": []
+              "title": "Advanced Techniques",
+              "children": [
+                {
+                  "title": "Flavor Enhancements",
+                  "children": [
+                    {
+                      "title": "Adding Wine",
+                      "children": []
+                    },
+                    {
+                      "title": "Herb Infusion",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "title": "Time Management in Cooking",
+                  "children": [
+                    {
+                      "title": "Planning Your Cooking Timeline",
+                      "children": []
+                    },
+                    {
+                      "title": "Efficient Cleanup",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "Final Presentation and Serving",
+              "children": [
+                {
+                  "title": "Plating Techniques",
+                  "children": [
+                    {
+                      "title": "Arranging Pasta",
+                      "children": []
+                    },
+                    {
+                      "title": "Garnishing",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "title": "Pairing with Sides and Wines",
+                  "children": [
+                    {
+                      "title": "Side Dish Ideas",
+                      "children": []
+                    },
+                    {
+                      "title": "Wine Pairing Suggestions",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "Mastery and Innovation",
+              "children": [
+                {
+                  "title": "Experimenting with Variations",
+                  "children": [
+                    {
+                      "title": "Vegetarian Bolognese",
+                      "children": []
+                    },
+                    {
+                      "title": "Spicy Bolognese",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "title": "Hosting a Dinner Party",
+                  "children": [
+                    {
+                      "title": "Menu Planning",
+                      "children": []
+                    },
+                    {
+                      "title": "Cooking for a Crowd",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             }
           ]
-        },
-        {
-          "title": "Applications of Machine Learning",
-          "children": []
         }
-      ]
-    },
-    {
-      "title": "Prerequisites",
-      "children": [
-        {
-          "title": "Mathematics",
-          "children": [
-            {
-              "title": "Linear Algebra",
-              "children": []
-            },
-            {
-              "title": "Calculus",
-              "children": []
-            },
-            {
-              "title": "Statistics",
-              "children": []
-            }
-          ]
-        },
-        {
-          "title": "Programming",
-          "children": [
-            {
-              "title": "Python",
-              "children": []
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "title": "Core Machine Learning Concepts",
-      "children": [
-        {
-          "title": "Data Preprocessing",
-          "children": [
-            {
-              "title": "Data Cleaning",
-              "children": []
-            },
-            {
-              "title": "Feature Scaling",
-              "children": []
-            }
-          ]
-        },
-        {
-          "title": "Feature Engineering",
-          "children": []
-        },
-        {
-          "title": "Model Selection",
-          "children": [
-            {
-              "title": "Choosing the Right Algorithm",
-              "children": []
-            },
-            {
-              "title": "Cross Validation",
-              "children": []
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "title": "Machine Learning Algorithms",
-      "children": [
-        {
-          "title": "Regression",
-          "children": [
-            {
-              "title": "Linear Regression",
-              "children": []
-            },
-            {
-              "title": "Logistic Regression",
-              "children": []
-            }
-          ]
-        },
-        {
-          "title": "Classification",
-          "children": [
-            {
-              "title": "Support Vector Machines",
-              "children": []
-            },
-            {
-              "title": "Decision Trees",
-              "children": []
-            },
-            {
-              "title": "Random Forest",
-              "children": []
-            }
-          ]
-        },
-        {
-          "title": "Clustering",
-          "children": [
-            {
-              "title": "K-Means",
-              "children": []
-            },
-            {
-              "title": "Hierarchical Clustering",
-              "children": []
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "title": "Deep Learning",
-      "children": [
-        {
-          "title": "Neural Networks",
-          "children": [
-            {
-              "title": "Perceptron",
-              "children": []
-            },
-            {
-              "title": "Backpropagation",
-              "children": []
-            }
-          ]
-        },
-        {
-          "title": "Convolutional Neural Networks",
-          "children": []
-        },
-        {
-          "title": "Recurrent Neural Networks",
-          "children": []
-        }
-      ]
-    },
-    {
-      "title": "Practical Projects",
-      "children": [
-        {
-          "title": "Sentiment Analysis",
-          "children": []
-        },
-        {
-          "title": "Image Recognition",
-          "children": []
-        },
-        {
-          "title": "Recommendation Systems",
-          "children": []
-        }
-      ]
-    }
-  ]
-}
+      
+      

@@ -10,6 +10,7 @@ node_modules/
 frontend/.next/
 /out/
 /backend/.env
+/backend/data.json
 
 # Production
 /build
