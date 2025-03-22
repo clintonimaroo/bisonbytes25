@@ -7,7 +7,7 @@ node_modules/
 /coverage
 
 # Next.js
-frontend/.next/
+/frontend/.next/
 /out/
 /backend/.env
 /backend/data.json
