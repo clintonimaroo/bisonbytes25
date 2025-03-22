@@ -1,0 +1,349 @@
+"use client"
+import React, { useState, useEffect, useCallback } from 'react';
+import Image from "next/image";
+import './styles/home.scss';
+import Sidebar from "./components/Sidebar";
+
+import ReactFlow, {
+  MiniMap,
+  Controls,
+  Background,
+  useNodesState,
+  useEdgesState,
+  addEdge,
+} from 'reactflow';
+import Editor from "@monaco-editor/react";
+
+import 'reactflow/dist/style.css';
+import { tree, treeToGraph, treeToGraphHorizontal, treex } from './data';
+import axios from 'axios';
+import { ArrowDown, ArrowUp, ChevronsLeft, ChevronsRight, Fullscreen, Maximize, Minimize } from 'lucide-react';
+import { io } from 'socket.io-client';
+import { sax } from './tt';
+
+const socket = io('http://localhost:4555');
+function FloatChart({ roadmap, onNodeClick }) {
+
+
+  // const baseTree = treeToGraph(roadmap);
+
+  const initialNodes = roadmap[0];
+  const initialEdges = roadmap[1];
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
+
+  useEffect(() => {
+    setNodes(roadmap[0]);
+    setEdges(roadmap[1]);
+  }, [roadmap]);
+
+
+  return (
+
+    <div style={{ width: '100vw', height: '100vh' }}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onClick={(e) => {
+
+          onNodeClick(e.target.textContent)
+        }}
+
+      // fitView
+
+      // layoutOptions={{
+      //   orientation: 'horizontal'
+      // }}
+      >
+        <Controls />
+        <MiniMap />
+        <Background variant="dots" gap={20} size={1.5} />
+      </ReactFlow>
+    </div>
+  );
+}
+export default function Home() {
+  console.log(sax.content)
+  const [isListening, setIsListening] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  const [concept, setConcept] = useState('');
+  const [roadmap, setRoadmap] = useState(null);
+  const [loader, setLoader] = useState(false)
+  const [nodeDetails, setNodeDetails] = useState(null)
+  const [nodeDetailsVisible, setNodeDetailsVisible] = useState(false)
+  const [nodeFullScreen, setNodeFullScreen] = useState(false)
+  // async function generateRoadmap(){
+  //   setLoader(true)
+  //   axios.post("http://localhost:4555/generate-roadmap",{
+  //     "concept":transcript
+  //   }).then(
+  //     res=>{
+  //       setRoadmap(res.data)
+  //       setLoader(false)
+  //     }
+  //   )
+  // }
+  const svg_btn_color = transcript.length == 0 ? "#8e939c" : "#fff"
+  // useEffect(() => {
+  //   const speechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  //   const recognition = new speechRecognition();
+
+  //   recognition.continuous = true;
+  //   recognition.interimResults = true;
+  //   recognition.lang = 'en-US';
+
+  //   recognition.onresult = (event) => {
+  //     const current = event.resultIndex;
+  //     const result = event.results[current][0];
+  //     if (result.isFinal && result.confidence > 0.7) {
+  //       setTranscript(prevTranscript => prevTranscript + ' ' + result.transcript);
+  //     }
+  //   };
+
+  //   if (isListening) {
+  //     recognition.start();
+  //   } else {
+  //     recognition.stop();
+  //   }
+
+  //   return () => {
+  //     recognition.stop();
+  //   };
+  // }, [isListening]);
+
+  // const toggleListening = () => {
+  //   setIsListening(!isListening);
+
+  // };
+  const [endText, setEndText] = useState(false)
+  let recognition = null;
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+        recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US';
+
+        recognition.onresult = (event) => {
+          const last = event.results.length - 1;
+          const text = event.results[last][0].transcript;
+          console.log('Confidence: ' + event.results[0][0].confidence);
+          console.log(text)
+          setTranscript((prev) => prev + " " + text)
+        };
+
+        recognition.onend = () => {
+          // if (endText==false) {
+          //   recognition.start();
+          // }
+        };
+      } else {
+        console.error('SpeechRecognition is not supported in this browser');
+      }
+    }
+  }, []);
+
+  const startRecognition = () => {
+    if (recognition) {
+      recognition.start();
+    }
+  };
+
+  const stopRecognition = () => {
+    if (recognition) {
+      setEndText(true)
+      recognition.stop();
+    }
+  };
+
+  async function toggleListening() {
+    if (isListening) {
+      stopRecognition()
+      setIsListening(false)
+
+
+    }
+    else {
+      startRecognition()
+      setIsListening(true)
+
+    }
+  }
+
+  useEffect(() => {
+    socket.on('stream', (data) => {
+      try {
+
+        setRoadmap(treeToGraph([JSON.parse(data)]));
+      }
+      catch (e) {
+        console.log(e)
+      }
+
+    });
+    socket.on('done_stream', (data) => {
+      console.log('final_data', roadmap)
+      setLoader(false)
+    })
+    socket.on('error', (error) => {
+      console.error('Error:', error);
+    });
+
+    socket.on("response", (data) => {
+
+    })
+
+    return () => {
+      socket.off('stream');
+      socket.off('error');
+    };
+  }, []);
+
+  function onNodeClick(node) {
+    setNodeDetails({
+      "title": node
+    })
+    setNodeDetailsVisible(true)
+  }
+
+  const generateRoadmap = () => {
+    // socket.emit("message",transcript)
+    setLoader(true)
+    setRoadmap([]);
+    socket.emit('generate-roadmap', transcript);
+
+    setTranscript('')
+  };
+
+  return (
+    <div className="home">
+      <Sidebar />
+      <div className="app">
+        <div className="top">
+          {roadmap && <FloatChart roadmap={roadmap} onNodeClick={onNodeClick} />}
+          {/* {treex &&          <FloatChart roadmap={treex}/>} */}
+        </div>
+        <div className="bottom">
+          {loader == true && <LoadingSpinner />}
+          <div className="input-div">
+            <div className="input-box">
+              <div className="left">
+                <div className="mic" onClick={() => {
+                  toggleListening()
+                }}>
+                  {isListening ?
+                    <i className='bx bxs-microphone'></i> :
+                    <i className='bx bxs-microphone-off'></i>
+                  }
+                </div>
+                <textarea type="text" placeholder="Generate a roadmap, learn anything." value={transcript} onChange={(e) => setTranscript(e.target.value)}
+
+                />
+              </div>
+              <div className="right">
+                <button className={transcript.length == 0 ? "disabled" : ""} onClick={generateRoadmap}
+
+                >
+                  {/* <svg xmlns="http://www.w3.org/2000/svg" viewBox={svg_btn_color} fill="currentColor" class="h-4 w-4">
+                    <path d="M200 32v144a8 8 0 0 1-8 8H67.31l34.35 34.34a8 8 0 0 1-11.32 11.32l-48-48a8 8 0 0 1 0-11.32l48-48a8 8 0 0 1 11.32 11.32L67.31 168H184V32a8 8 0 0 1 16 0Z"></path>
+                  </svg> */}
+                  <ArrowUp color={svg_btn_color} />
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="select-div">
+            <label htmlFor="">
+              Detailed
+            </label>
+            <i class='bx bx-chevron-down'></i>
+          </div>
+
+        </div>
+      </div>
+
+      <div className={nodeDetailsVisible == false ? "node-details-div hidden" : nodeFullScreen == true ? "node-details-div full-screen" : "node-details-div"}>
+        <div className="node-body">
+          <div className="top">
+            <div className="left">
+
+
+              <a onClick={() => setNodeDetailsVisible(false)}  ><ChevronsRight color='#9ca3af' /></a>
+              <a onClick={() => setNodeFullScreen(!nodeFullScreen)}>
+                {nodeFullScreen == true ? <Minimize color='#9ca3af' size={20} /> : <Fullscreen color='#9ca3af' size={20} />}
+              </a>
+            </div>
+          </div>
+          {
+            nodeDetails == null ?
+              <div className="node-content">
+                <div className="title">
+                  Select a node to view details
+                </div>
+              </div>
+              :
+              <div className="node-content">
+                <div className="title">
+                  {nodeDetails.title}
+                </div>
+
+                <div className="content">
+                  {
+                    sax.content.map((item, index) => (
+                      <div className="item" key={index}>
+                        {item.content}
+                        {item.type == 'code' && <Editor value={item.content} language={item.programming_language}
+                          theme="vs-dark"
+                          height={item.content.split("\n").length * 23.5}
+
+
+                          options={{
+                            inlineSuggest: true,
+                            fontSize: "16px",
+                            readOnly: true,
+                            formatOnType: true,
+                            autoClosingBrackets: true,
+                            minimap: { scale: 10 }
+                          }}
+                        />}
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+          }
+
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+
+function LoadingSpinner() {
+  const options = [
+    'Generating Roadmap',
+
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+
+
+  return (
+    <div className="loaders-status-div">
+      {options.slice(0, currentIndex + 1).map((option, index) => (
+        <div className="section" key={index}>
+          {currentIndex == index ? <span className="loader-x"></span> : <i className='bx bxs-check-circle'></i>}
+          <label>{option}</label>
+        </div>
+      ))}
+    </div>
+  );
+}

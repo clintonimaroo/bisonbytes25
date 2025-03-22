@@ -1,0 +1,42 @@
+$border-color: #e5e7eb;
+
+.sidebar {
+    width: 15vw;
+    border-width: 0px 1.5px 0px 0px;
+    border-color: $border-color;
+    border-style: solid;
+    min-height: 100vh;
+    position: relative;
+    transition: width 0.3s ease;
+
+    &.minimized {
+        width: 50px; 
+    }
+
+    .minimize-button {
+        position: absolute;
+        top: 50%;
+        right: -30px; 
+        transform: translateY(-50%);
+        background-color: #ffffff00;
+        border: 1px solid #e5e7eb00;
+        padding: 5px;
+        cursor: pointer;
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+
+        i {
+            font-size: 14px;
+            color: #6b7280; 
+        }
+
+        &.minimized {
+            transform: translateY(-50%) rotate(180deg);
+        }
+    }
+}
+
+:root {
+    --tw-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -4px rgba(0, 0, 0, .1);
+    --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+}
