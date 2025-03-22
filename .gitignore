@@ -9,6 +9,7 @@ node_modules/
 # Next.js
 frontend/.next/
 /out/
+/backend/.env
 
 # Production
 /build
