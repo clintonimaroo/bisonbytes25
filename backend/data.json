@@ -1,0 +1,192 @@
+{
+  "title": "Introduction to Machine Learning",
+  "children": [
+    {
+      "title": "Basic Concepts",
+      "children": [
+        {
+          "title": "What is Machine Learning?",
+          "children": [] 
+        },
+        {
+          "title": "Types of Machine Learning",
+          "children": [
+            {
+              "title": "Supervised Learning",
+              "children": []
+            },
+            {
+              "title": "Unsupervised Learning",
+              "children": []
+            },
+            {
+              "title": "Reinforcement Learning",
+              "children": []
+            }
+          ]
+        },
+        {
+          "title": "Applications of Machine Learning",
+          "children": []
+        }
+      ]
+    },
+    {
+      "title": "Prerequisites",
+      "children": [
+        {
+          "title": "Mathematics",
+          "children": [
+            {
+              "title": "Linear Algebra",
+              "children": []
+            },
+            {
+              "title": "Calculus",
+              "children": []
+            },
+            {
+              "title": "Statistics",
+              "children": []
+            }
+          ]
+        },
+        {
+          "title": "Programming",
+          "children": [
+            {
+              "title": "Python",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Core Machine Learning Concepts",
+      "children": [
+        {
+          "title": "Data Preprocessing",
+          "children": [
+            {
+              "title": "Data Cleaning",
+              "children": []
+            },
+            {
+              "title": "Feature Scaling",
+              "children": []
+            }
+          ]
+        },
+        {
+          "title": "Feature Engineering",
+          "children": []
+        },
+        {
+          "title": "Model Selection",
+          "children": [
+            {
+              "title": "Choosing the Right Algorithm",
+              "children": []
+            },
+            {
+              "title": "Cross Validation",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Machine Learning Algorithms",
+      "children": [
+        {
+          "title": "Regression",
+          "children": [
+            {
+              "title": "Linear Regression",
+              "children": []
+            },
+            {
+              "title": "Logistic Regression",
+              "children": []
+            }
+          ]
+        },
+        {
+          "title": "Classification",
+          "children": [
+            {
+              "title": "Support Vector Machines",
+              "children": []
+            },
+            {
+              "title": "Decision Trees",
+              "children": []
+            },
+            {
+              "title": "Random Forest",
+              "children": []
+            }
+          ]
+        },
+        {
+          "title": "Clustering",
+          "children": [
+            {
+              "title": "K-Means",
+              "children": []
+            },
+            {
+              "title": "Hierarchical Clustering",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Deep Learning",
+      "children": [
+        {
+          "title": "Neural Networks",
+          "children": [
+            {
+              "title": "Perceptron",
+              "children": []
+            },
+            {
+              "title": "Backpropagation",
+              "children": []
+            }
+          ]
+        },
+        {
+          "title": "Convolutional Neural Networks",
+          "children": []
+        },
+        {
+          "title": "Recurrent Neural Networks",
+          "children": []
+        }
+      ]
+    },
+    {
+      "title": "Practical Projects",
+      "children": [
+        {
+          "title": "Sentiment Analysis",
+          "children": []
+        },
+        {
+          "title": "Image Recognition",
+          "children": []
+        },
+        {
+          "title": "Recommendation Systems",
+          "children": []
+        }
+      ]
+    }
+  ]
+}
