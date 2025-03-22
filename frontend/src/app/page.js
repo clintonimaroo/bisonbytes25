@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from "next/image";
 import './styles/home.scss';
 import Sidebar from "./components/Sidebar";
@@ -77,6 +77,11 @@ export default function Home() {
   const [nodeDetails, setNodeDetails] = useState(null)
   const [nodeDetailsVisible, setNodeDetailsVisible] = useState(false)
   const [nodeFullScreen, setNodeFullScreen] = useState(false)
+  const [isWakeWordMode, setIsWakeWordMode] = useState(true);
+  const [isProcessingCommand, setIsProcessingCommand] = useState(false);
+  const recognitionRef = useRef(null);
+  const wakeWordAudioRef = useRef(null);
+
   // async function generateRoadmap(){
   //   setLoader(true)
   //   axios.post("http://localhost:4555/generate-roadmap",{
@@ -121,57 +126,106 @@ export default function Home() {
 
   // };
   const [endText, setEndText] = useState(false)
-  let recognition = null;
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // Create wake word audio element
+      wakeWordAudioRef.current = new Audio('/wake-word.mp3');
+
       if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-        recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognitionRef.current = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+        const recognition = recognitionRef.current;
         recognition.lang = 'en-US';
+        recognition.continuous = true;
+        recognition.interimResults = true;
 
         recognition.onresult = (event) => {
           const last = event.results.length - 1;
           const text = event.results[last][0].transcript;
-          console.log('Confidence: ' + event.results[0][0].confidence);
-          console.log(text)
-          setTranscript((prev) => prev + " " + text)
+          console.log('Recognized text:', text);
+
+          if (isWakeWordMode) {
+            // Check for wake word in continuous listening mode
+            if (text.toLowerCase().includes('hey buddy')) {
+              console.log('Wake word detected: "Hey Buddy"');
+              wakeWordAudioRef.current.play(); // Play notification sound
+              setIsWakeWordMode(false);
+              setIsProcessingCommand(true);
+              setIsListening(true);
+
+              // Restart recognition to clear buffer
+              recognition.stop();
+              setTimeout(() => {
+                recognition.start();
+              }, 500);
+            }
+          } else if (isProcessingCommand) {
+            // Process the actual command after wake word
+            console.log('Processing command:', text);
+            setTranscript(text);
+
+            // If the command has stopped for a moment, process it
+            if (event.results[last].isFinal) {
+              setIsProcessingCommand(false);
+              // Wait a bit and go back to wake word mode
+              setTimeout(() => {
+                if (text.trim().length > 0) {
+                  generateRoadmap();
+                }
+                setIsWakeWordMode(true);
+              }, 1000);
+            }
+          }
         };
 
         recognition.onend = () => {
-          // if (endText==false) {
-          //   recognition.start();
-          // }
+          // Restart recognition if it's in wake word mode
+          if (isWakeWordMode) {
+            recognition.start();
+          }
         };
+
+        // Start listening for wake word
+        if (isWakeWordMode) {
+          recognition.start();
+        }
       } else {
         console.error('SpeechRecognition is not supported in this browser');
       }
     }
-  }, []);
+
+    return () => {
+      // Clean up
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, [isWakeWordMode, isProcessingCommand]);
 
   const startRecognition = () => {
-    if (recognition) {
-      recognition.start();
+    if (recognitionRef.current) {
+      recognitionRef.current.start();
     }
   };
 
   const stopRecognition = () => {
-    if (recognition) {
+    if (recognitionRef.current) {
       setEndText(true)
-      recognition.stop();
+      recognitionRef.current.stop();
     }
   };
 
   async function toggleListening() {
     if (isListening) {
-      stopRecognition()
-      setIsListening(false)
-
-
-    }
-    else {
-      startRecognition()
-      setIsListening(true)
-
+      stopRecognition();
+      setIsListening(false);
+      setIsWakeWordMode(true);
+    } else {
+      setIsWakeWordMode(false);
+      setIsProcessingCommand(true);
+      startRecognition();
+      setIsListening(true);
     }
   }
 
@@ -213,10 +267,11 @@ export default function Home() {
 
   const generateRoadmap = () => {
     // socket.emit("message",transcript)
+    if (transcript.trim().length === 0) return;
+
     setLoader(true)
     setRoadmap([]);
     socket.emit('generate-roadmap', transcript);
-
     setTranscript('')
   };
 
