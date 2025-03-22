@@ -7,6 +7,26 @@ export default function Sidebar() {
     const [isMinimized, setIsMinimized] = useState(false);
     // Chat History (Mock data for now)
     const [chatHistory, setChatHistory] = useState({});
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredChatHistory, setFilteredChatHistory] = useState({});
+
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const handleSearch = () => {
+        const filteredChats = {};
+        // Iterate through the chat history and filter based on the search query
+        Object.keys(chatHistory).forEach(group => {
+            const chatsInGroup = chatHistory[group].filter(chat => 
+                chat.title.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            if (chatsInGroup.length > 0) {
+                filteredChats[group] = chatsInGroup; // Add to filtered results if matches found
+            }
+        });
+        setFilteredChatHistory(filteredChats); // Update the state with filtered results
+    };
 
     const toggleSidebar = () => {
         setIsMinimized(!isMinimized);
@@ -72,15 +92,24 @@ export default function Sidebar() {
             <div className="sidebar-content">
                 <div className="sidebar-content-item">
                   {/* Chat History Search */}
-                    {/* <div className="chat-history-search">
-                        <input type="text" placeholder="Search" />
-                    </div> */}
+                <input 
+                    type="text" 
+                    placeholder="Search chats..." 
+                    value={searchQuery} 
+                    onChange={handleSearchChange} // Handle input change
+                />
+                <button 
+                    onClick={() => {handleSearch()}}
+                    aria-label="search button"
+                >
+                        <i className="fas fa-search"></i>
+                </button>
                     {/** Chat History */}
                     <div className="chat-history">
-                        {Object.keys(chatHistory).map((group, index) => (
+                        {(searchQuery ? Object.keys(filteredChatHistory) : Object.keys(chatHistory)).map((group, index) => (
                             <div className="chat-history-group" key={index}>
                                 <h4>{group}</h4>
-                                {chatHistory[group].map((chat, index) => (
+                                {(searchQuery ? filteredChatHistory[group] : chatHistory[group]).map((chat, index) => (
                                     <div className="chat-history-item" key={index}>
                                         <div className="chat-history-item-text">
                                             {chat.title}
@@ -89,6 +118,9 @@ export default function Sidebar() {
                                 ))}
                             </div>
                         ))}
+                        {searchQuery && Object.keys(filteredChatHistory).length === 0 && (
+                            <div>No results found</div>
+                        )}
                     </div>
                 </div>
             </div>
