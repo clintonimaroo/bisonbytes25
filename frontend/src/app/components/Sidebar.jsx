@@ -1,30 +1,12 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import '../styles/sidebar.scss';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 export default function Sidebar() {
     const [isMinimized, setIsMinimized] = useState(false);
     // Chat History (Mock data for now)
-    const [chatHistory, setChatHistory] = useState({
-        "Today": [
-            {
-                title: "Generate a roadmap for HTML",
-                date: "2023-10-01T12:00:00Z"
-            }
-        ],
-        "Yesterday": [
-            {
-                title: "Generate a roadmap for Python",
-                date: "2023-10-02T14:30:00Z"
-            }
-        ],
-        "Last 7 Days": [
-            {
-                title: "Generate a roadmap for CSS",
-                date: "2023-10-03T09:15:00Z"
-            }
-        ]
-    });
+    const [chatHistory, setChatHistory] = useState({});
 
     const toggleSidebar = () => {
         setIsMinimized(!isMinimized);
@@ -66,6 +48,21 @@ export default function Sidebar() {
         return groupedChats;
     };
 
+
+    useEffect(() => {
+        const fetchChatHistory = async () => {
+            const response = await fetch('./chatHistory.json'); // Adjust the endpoint as needed
+            const data = await response.json();
+
+            // Sort the data by date before grouping
+            const sortedData = data.sort((a, b) => new Date(b.date) - new Date(a.date));
+            const groupedData = groupChatHistory(sortedData); // Group the fetched data
+            setChatHistory(groupedData);
+        };
+    
+        fetchChatHistory();
+    }, []);
+
     return (
         <div className={`sidebar ${isMinimized ? 'minimized' : ''}`}>
             <button className="minimize-button" onClick={toggleSidebar}>
@@ -82,7 +79,7 @@ export default function Sidebar() {
                     <div className="chat-history">
                         {Object.keys(chatHistory).map((group, index) => (
                             <div className="chat-history-group" key={index}>
-                                <h3>{group}</h3>
+                                <h4>{group}</h4>
                                 {chatHistory[group].map((chat, index) => (
                                     <div className="chat-history-item" key={index}>
                                         <div className="chat-history-item-text">

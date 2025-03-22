@@ -1,7 +1,7 @@
 $border-color: #e5e7eb;
 
 .sidebar {
-    width: 15vw;
+    width: 18vw;
     border-width: 0px 1.5px 0px 0px;
     border-color: $border-color;
     border-style: solid;
@@ -38,6 +38,16 @@ $border-color: #e5e7eb;
 
 .chat-history {
     padding: 10px; // Add padding around the chat history section
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 98vh;
+    scrollbar-width: thin;
+    scrollbar-color: #e5e7eb #ffffff;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+    
 
     h3 {
         margin-bottom: 10px; // Space between title and items
