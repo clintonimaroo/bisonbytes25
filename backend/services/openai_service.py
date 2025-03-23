@@ -47,16 +47,25 @@ async def speech_to_text(audio_data: bytes) -> str:
         print(f"Speech-to-text error: {e}")
         return ""
 
-async def text_to_speech(text: str, voice: str = "alloy") -> bytes:
+async def text_to_speech(text: str, voice: str = "fable") -> bytes:
     """Convert text to speech using OpenAI TTS"""
     if not text.strip():
         return b""
         
     try:
         response = await client.audio.speech.create(
-            model="tts-1",
+            model="gpt-4o-mini-tts",
             voice=voice,
-            input=text
+            input=text,
+            instructions="""
+            Voice Affect: Energetic and animated; dynamic with variations in pitch and tone.
+            Tone: Excited and enthusiastic, conveying an upbeat and thrilling atmosphere. 
+            Pacing: Rapid delivery when describing the game or key moments to convey intensity and build excitement.
+            Slightly slower during dramatic pauses to let key points sink in.
+            Emotion: Intensely focused, and excited. Giving off positive energy.
+            Personality: Relatable and engaging. 
+            Pauses: Short, purposeful pauses after key moments.
+            """
         )
         # The response is already a bytes object in the new API
         return response.content

@@ -1,0 +1,147 @@
+
+{
+  "title": "Basics of Bottles",
+  "children": [
+    {
+      "title": "Understanding Bottles",
+      "children": [
+        {
+          "title": "What is a Bottle?",
+          "children": []
+        },
+        {
+          "title": "History of Bottles",
+          "children": []
+        },
+        {
+          "title": "Common Terms Related to Bottles",
+          "children": []
+        }
+      ]
+    },
+    {
+      "title": "Types of Bottles",
+      "children": [
+        {
+          "title": "Material Types",
+          "children": [
+            {
+              "title": "Glass Bottles",
+              "children": []
+            },
+            {
+              "title": "Plastic Bottles",
+              "children": []
+            },
+            {
+              "title": "Metal Bottles",
+              "children": []
+            }
+          ]
+        },
+        {
+          "title": "Functional Types",
+          "children": [
+            {
+              "title": "Water Bottles",
+              "children": []
+            },
+            {
+              "title": "Wine Bottles",
+              "children": []
+            },
+            {
+              "title": "Insulated Bottles",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Bottle Design",
+      "children": [
+        {
+          "title": "Ergonomics",
+          "children": []
+        },
+        {
+          "title": "Aesthetics",
+          "children": []
+        },
+        {
+          "title": "Practical Design Considerations",
+          "children": []
+        }
+      ]
+    },
+    {
+      "title": "Manufacturing Process",
+      "children": [
+        {
+          "title": "Glass Bottle Manufacturing",
+          "children": []
+        },
+        {
+          "title": "Plastic Bottle Manufacturing",
+          "children": []
+        },
+        {
+          "title": "Metal Bottle Manufacturing",
+          "children": []
+        }
+      ]
+    },
+    {
+      "title": "Sustainability and Recycling",
+      "children": [
+        {
+          "title": "Environmental Impact",
+          "children": []
+        },
+        {
+          "title": "Recycling Processes",
+          "children": []
+        },
+        {
+          "title": "Eco-friendly Bottles",
+          "children": []
+        }
+      ]
+    },
+    {
+      "title": "Bottling Practices",
+      "children": [
+        {
+          "title": "Filling Techniques",
+          "children": []
+        },
+        {
+          "title": "Capping and Sealing",
+          "children": []
+        },
+        {
+          "title": "Labeling",
+          "children": []
+        }
+      ]
+    },
+    {
+      "title": "Bottle Maintenance",
+      "children": [
+        {
+          "title": "Cleaning Methods",
+          "children": []
+        },
+        {
+          "title": "Repairing Damaged Bottles",
+          "children": []
+        },
+        {
+          "title": "Storing Bottles Properly",
+          "children": []
+        }
+      ]
+    }
+  ]
+}
