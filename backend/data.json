@@ -1,147 +1,136 @@
 
-{
-  "title": "Basics of Bottles",
-  "children": [
-    {
-      "title": "Understanding Bottles",
-      "children": [
+
         {
-          "title": "What is a Bottle?",
-          "children": []
-        },
-        {
-          "title": "History of Bottles",
-          "children": []
-        },
-        {
-          "title": "Common Terms Related to Bottles",
-          "children": []
-        }
-      ]
-    },
-    {
-      "title": "Types of Bottles",
-      "children": [
-        {
-          "title": "Material Types",
+          "title": "Python Roadmap for Creating Automated Python Learning Path",
           "children": [
             {
-              "title": "Glass Bottles",
-              "children": []
+              "title": "Fundamentals of Python",
+              "children": [
+                {
+                  "title": "Python Setup",
+                  "children": [
+                    {
+                      "title": "Installing Python",
+                      "children": []
+                    },
+                    {
+                      "title": "Setting up IDE",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "title": "Basic Python Syntax",
+                  "children": [
+                    {
+                      "title": "Variables and Data Types",
+                      "children": []
+                    },
+                    {
+                      "title": "Control Structures",
+                      "children": []
+                    },
+                    {
+                      "title": "Functions and Modules",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             },
             {
-              "title": "Plastic Bottles",
-              "children": []
+              "title": "Intermediate Python Concepts",
+              "children": [
+                {
+                  "title": "Object-Oriented Programming",
+                  "children": [
+                    {
+                      "title": "Classes and Objects",
+                      "children": []
+                    },
+                    {
+                      "title": "Inheritance",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "title": "File Operations",
+                  "children": [
+                    {
+                      "title": "Reading Files",
+                      "children": []
+                    },
+                    {
+                      "title": "Writing Files",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             },
             {
-              "title": "Metal Bottles",
-              "children": []
+              "title": "Advanced Python Topics",
+              "children": [
+                {
+                  "title": "Data Structures",
+                  "children": [
+                    {
+                      "title": "Lists and Tuples",
+                      "children": []
+                    },
+                    {
+                      "title": "Dictionaries and Sets",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "title": "Error Handling",
+                  "children": [
+                    {
+                      "title": "Exceptions",
+                      "children": []
+                    },
+                    {
+                      "title": "Logging",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "Practical Projects",
+              "children": [
+                {
+                  "title": "Automated Task Scripts",
+                  "children": [
+                    {
+                      "title": "Web Scraping",
+                      "children": []
+                    },
+                    {
+                      "title": "Data Analysis Scripts",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "title": "Simple Applications",
+                  "children": [
+                    {
+                      "title": "Command-line Applications",
+                      "children": []
+                    },
+                    {
+                      "title": "GUI Applications",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
             }
           ]
-        },
-        {
-          "title": "Functional Types",
-          "children": [
-            {
-              "title": "Water Bottles",
-              "children": []
-            },
-            {
-              "title": "Wine Bottles",
-              "children": []
-            },
-            {
-              "title": "Insulated Bottles",
-              "children": []
-            }
-          ]
         }
-      ]
-    },
-    {
-      "title": "Bottle Design",
-      "children": [
-        {
-          "title": "Ergonomics",
-          "children": []
-        },
-        {
-          "title": "Aesthetics",
-          "children": []
-        },
-        {
-          "title": "Practical Design Considerations",
-          "children": []
-        }
-      ]
-    },
-    {
-      "title": "Manufacturing Process",
-      "children": [
-        {
-          "title": "Glass Bottle Manufacturing",
-          "children": []
-        },
-        {
-          "title": "Plastic Bottle Manufacturing",
-          "children": []
-        },
-        {
-          "title": "Metal Bottle Manufacturing",
-          "children": []
-        }
-      ]
-    },
-    {
-      "title": "Sustainability and Recycling",
-      "children": [
-        {
-          "title": "Environmental Impact",
-          "children": []
-        },
-        {
-          "title": "Recycling Processes",
-          "children": []
-        },
-        {
-          "title": "Eco-friendly Bottles",
-          "children": []
-        }
-      ]
-    },
-    {
-      "title": "Bottling Practices",
-      "children": [
-        {
-          "title": "Filling Techniques",
-          "children": []
-        },
-        {
-          "title": "Capping and Sealing",
-          "children": []
-        },
-        {
-          "title": "Labeling",
-          "children": []
-        }
-      ]
-    },
-    {
-      "title": "Bottle Maintenance",
-      "children": [
-        {
-          "title": "Cleaning Methods",
-          "children": []
-        },
-        {
-          "title": "Repairing Damaged Bottles",
-          "children": []
-        },
-        {
-          "title": "Storing Bottles Properly",
-          "children": []
-        }
-      ]
-    }
-  ]
-}
+      

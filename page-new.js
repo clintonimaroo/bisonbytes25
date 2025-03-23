@@ -111,8 +111,39 @@ export default function Home() {
       });
     }
   }, []);
-  
+
   const svg_btn_color = transcript.length == 0 ? "#8e939c" : "#fff";
+  // useEffect(() => {
+  //   const speechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  //   const recognition = new speechRecognition();
+
+  //   recognition.continuous = true;
+  //   recognition.interimResults = true;
+  //   recognition.lang = 'en-US';
+
+  //   recognition.onresult = (event) => {
+  //     const current = event.resultIndex;
+  //     const result = event.results[current][0];
+  //     if (result.isFinal && result.confidence > 0.7) {
+  //       setTranscript(prevTranscript => prevTranscript + ' ' + result.transcript);
+  //     }
+  //   };
+
+  //   if (isListening) {
+  //     recognition.start();
+  //   } else {
+  //     recognition.stop();
+  //   }
+
+  //   return () => {
+  //     recognition.stop();
+  //   };
+  // }, [isListening]);
+
+  // const toggleListening = () => {
+  //   setIsListening(!isListening);
+
+  // };
   const [endText, setEndText] = useState(false);
   let recognition = null;
 
