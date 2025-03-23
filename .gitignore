@@ -9,6 +9,7 @@ node_modules/
 # Next.js
 /.next/
 /out/
+frontend/.next/
 
 # Production
 /build
@@ -23,6 +24,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Local env files
+.env*
 .env*.local
 
 # Vercel
@@ -30,4 +32,42 @@ yarn-error.log*
 
 # TypeScript
 *.tsbuildinfo
-next-env.d.ts 
+next-env.d.ts
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+backend/__pycache__/
+backend/*/__pycache__/
+backend/*/*/__pycache__/
+backend/venv/
+backend/env/
+backend/.env
+backend/env.py
+backend/env.py[cod]
+backend/env.py[w]
+backend/env.py[z]
+backend/env.py*~
+backend/.pytest_cache/
+
+# Generated files
+*.mp3
+*.wav
+*.ogg
+*.webm
+backend/tts_output.mp3
+backend/scraping_service/data.json
+backend/scraping_service/node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+logs
+*.log

@@ -1,16 +1,19 @@
 $border-color: #e5e7eb;
 
 .sidebar {
-    width: 15vw;
+    width: 18vw;
     border-width: 0px 1.5px 0px 0px;
     border-color: $border-color;
     border-style: solid;
     min-height: 100vh;
     position: relative;
-    transition: width 0.3s ease;
+    transition: width 0.4s ease;
 
     &.minimized {
-        width: 50px; 
+        width: 0px; 
+        .sidebar-content {
+            display: none; // Hide content when minimized
+        }
     }
 
     .minimize-button {
@@ -24,6 +27,7 @@ $border-color: #e5e7eb;
         cursor: pointer;
         border-radius: 50%;
         transition: transform 0.3s ease;
+        z-index: 1000;
 
         i {
             font-size: 14px;
@@ -33,6 +37,80 @@ $border-color: #e5e7eb;
         &.minimized {
             transform: translateY(-50%) rotate(180deg);
         }
+    }
+}
+
+.chat-history {
+    padding: 10px; // Add padding around the chat history section
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 90vh;
+    scrollbar-width: thin;
+    scrollbar-color: #e5e7eb #ffffff;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+
+    h4 {
+        margin-bottom: 5px; // Space between title and items
+        font-size: 0.9em; // Adjust font size for the section title
+    }
+
+    .chat-history-item {
+        white-space: nowrap;        // Prevents text from wrapping
+        overflow: hidden;           // Hides overflow text
+        text-overflow: ellipsis;    // Displays ellipsis for overflow text
+        max-width: 100%;            // Set max width to fill available space
+        padding: 8px;              // Add padding for better spacing
+        cursor: pointer;           // Change cursor to pointer for interactivity
+        transition: background-color 0.3s; // Smooth background transition
+
+        &:hover {
+            background-color: #f0f0f0; // Change background on hover
+        }
+    }
+}
+
+.sidebar-content {
+    display: flex; // Ensure the content is displayed in a flex container
+    flex-direction: column; // Stack items vertically
+    padding: 10px; // Add padding around the content
+}
+
+.sidebar-content-item-search {
+    display: flex; // Align input and button in a row
+    align-items: center; // Center items vertically
+    margin-bottom: 10px; // Space between input/button and chat history
+}
+
+input[type="text"] {
+    width: 100%; // Make the input take the full width
+    padding: 10px; // Add padding for better spacing
+    border: 1px solid #e5e7eb; // Add a border
+    border-radius: 5px; // Round the corners
+    margin-bottom: 10px; // Space between input and button
+    font-size: 14px; // Set font size
+    transition: border-color 0.3s; // Smooth transition for border color
+
+    &:focus {
+        border-color: #6b7280; // Change border color on focus
+        outline: none; // Remove default outline
+    }
+}
+
+button {
+    background-color: #a0aec0; // Set a calm, neutral background color for the button
+    color: white; // Set text color
+    padding: 10px; // Add padding
+    border: none; // Remove border
+    border-radius: 5px; // Round the corners
+    cursor: pointer; // Change cursor to pointer
+    transition: background-color 0.3s; // Smooth transition for background color
+
+    &:hover {
+        background-color: #636a72; // Calm neutral color for hover effect
     }
 }
 

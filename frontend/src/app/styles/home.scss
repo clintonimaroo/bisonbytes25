@@ -1,363 +1,376 @@
-$border-color:#e5e7eb;
+$border-color: #e5e7eb;
 @font-face {
-    font-family: "Google Sans";
-    src: url("https://fonts.gstatic.com/s/googlesans/v58/4UaRrENHsxJlGDuGo1OIlJfC6l_24rlCK1Yo_Iq2vgCIhM907w.woff2") format("woff2");
-  }
-.home{
-    display: flex;
-    flex-direction: row;
-    min-height: 100vh;
-    min-width: 100vw;
-    .app{
-        min-height: 100vh;
-        width: 85%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;   
-        .react-flow__panel {
-            display: none !important;
-          } 
-        .bottom{
-            width: 91%;
-            display: flex;
-            flex-direction: row;
-            align-items: flex-end;
-            position: absolute;
-            bottom: 0;
-            justify-content: center;
-            .select-div{
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                justify-content: center;
-                border-radius: .375rem;
-                border-width: 1.5px;
-                border-style: solid;
-                border-color: $border-color;
-                background-color: #fff;
-                padding: 10px 15px;
-                margin-bottom: 10px;
-                box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-
-                cursor: pointer;
-                label{
-                    font-family: "Google Sans";
-                    font-size: 16px;
-                    color: #6f737b;
-                
-                }
-                i{
-                    color: #6f737b;
-                    font-size: 24px;
-                    margin-left: 4px;
-                }
-                margin-left: 10px;
-            }
-            .right{
-                display: flex;
-                flex-direction: row;
-       
-                justify-content: flex-start;
-                align-items: center;
-                button{
-                    background-color: #333;
-                    width: 2.25rem;
-                    border: none;
-                    border-radius: .375rem;
-                    display: flex;
-                    flex-direction: row;
-                    justify-items: center;
-                    justify-content: center;
-                    align-items: center;
-                    transition: 0.5s;
-                    cursor: pointer;
-                    &.disabled{
-                        transition: 0.5s;
-                        background-color: #f0f0f3;
-                        svg{
-                            
-                            border: 0 solid #e5e7eb;
-                        } 
-                    }
-                    svg{
-                        width: 1rem;
-                        height: 1rem;
-                        border: 0 solid #fff;
-                    }
-    height: 2.25rem;
-                }
-            }
-            .input-div{
-                border-width: 1.5px;
-                width: 70%;
-                padding: 10px;
-            
-                background-color: #fff;
-                border-style: solid;
-                border-color: $border-color;
-                border-top-left-radius: .75rem;
-        border-top-right-radius: .75rem;
-        padding-top: 1rem;
-        padding-bottom:1rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-        .left{
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-   
-            justify-content: flex-start;
-            align-items: center;
-            .mic{
-                width: 2.6rem;
-                height: 2.6rem;
-                border-radius:9999px;
- 
-                display: flex;
-                flex-direction: row;
-                justify-content: center;
-                align-items: center;
- 
-                border-width: 2px;
-                border-style: solid;
-
-                border-color: $border-color;
-                
-        
-            i{
-                color:#6f737b;
-                font-size: 1.175rem;
-            }
-            }
-        }
-        .input-box{
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-            border-radius: .375rem;
-            border-width: 1.5px;
-            border-style: solid;
-            border-color: $border-color;
-            max-height: 15rem;
-            padding-left: .75rem;
-            padding-right: .75rem;
-            padding-top: .5rem;
-            padding-bottom: .5rem;
-                textarea{
-                    outline: none;
-                    border:none;
-                    width: 100%;
-                    font-size: 1.075rem;
-                    line-height: 1.25rem;
-                    padding-left: 1rem;
-                    padding-top: 1.25rem;
-        padding-bottom: 1.25rem;
-                    height: 60px;
-    padding-right: 1rem;
-    resize: none;
-    font-family: "Google Sans";
-                    &::placeholder{
-                        color: #9ca3af;
-                        font-family: "Google Sans";
-                        
-                    }
-                }
-            }
-        }
-        }
-    }
+  font-family: "Google Sans";
+  src: url("https://fonts.gstatic.com/s/googlesans/v58/4UaRrENHsxJlGDuGo1OIlJfC6l_24rlCK1Yo_Iq2vgCIhM907w.woff2")
+    format("woff2");
 }
-
-
-
-.loaders-status-div{
-    padding: 30px 30px;
-    width: 80%;
-    position: absolute;
-    bottom: 100px;
-    .section{
+.home {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  min-width: 100vw;
+  .app {
+    min-height: 100vh;
+    width: 85%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    .react-flow__panel {
+      display: none !important;
+    }
+    .bottom {
+      width: 91%;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      position: absolute;
+      bottom: 0;
+      justify-content: center;
+      .select-div {
         display: flex;
         flex-direction: row;
-        align-items: flex-start;
-        justify-content: flex-start;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.375rem;
+        border-width: 1.5px;
+        border-style: solid;
+        border-color: $border-color;
+        background-color: #fff;
+        padding: 10px 15px;
         margin-bottom: 10px;
-        animation-name: slideFadeUp;
-        animation-duration: 0.6s;
-        animation-timing-function: ease-out;
-        animation-fill-mode: forwards;
-        transition: 0.5s;
+        box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+          var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 
-    .loader-x {
-        width: 20px;
-        height: 20px;
-        border: 4px solid #bfc6d3;
-        border-bottom-color: transparent;
-        border-radius: 50%;
-        display: inline-block;
-        box-sizing: border-box;
-        animation: rotation 1s linear infinite;
-
+        cursor: pointer;
+        label {
+          font-family: "Google Sans";
+          font-size: 16px;
+          color: #6f737b;
         }
-    
-        @keyframes rotation {
-        0% {
-            transform: rotate(0deg);
+        i {
+          color: #6f737b;
+          font-size: 24px;
+          margin-left: 4px;
         }
-        100% {
-            transform: rotate(360deg);
-        }
-        } 
-        i{
-            color: #47d138;
-            font-size: 1.275rem;
-        }
-    label{
-        font-family: "Google Sans";
-        font-size: 1.075rem;
-        color: #6f737b;
         margin-left: 10px;
-    }
-    }
+      }
+      .right {
+        display: flex;
+        flex-direction: row;
 
+        justify-content: flex-start;
+        align-items: center;
+        button {
+          background-color: #333;
+          width: 2.25rem;
+          border: none;
+          border-radius: 0.375rem;
+          display: flex;
+          flex-direction: row;
+          justify-items: center;
+          justify-content: center;
+          align-items: center;
+          transition: 0.5s;
+          cursor: pointer;
+          &.disabled {
+            transition: 0.5s;
+            background-color: #f0f0f3;
+            svg {
+              border: 0 solid #e5e7eb;
+            }
+          }
+          svg {
+            width: 1rem;
+            height: 1rem;
+            border: 0 solid #fff;
+          }
+          height: 2.25rem;
+        }
+      }
+      .input-div {
+        border-width: 1.5px;
+        width: 70%;
+        padding: 10px;
+
+        background-color: #fff;
+        border-style: solid;
+        border-color: $border-color;
+        border-top-left-radius: 0.75rem;
+        border-top-right-radius: 0.75rem;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+          var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+        .left {
+          width: 100%;
+          display: flex;
+          flex-direction: row;
+
+          justify-content: flex-start;
+          align-items: center;
+          .mic {
+            width: 2.6rem;
+            height: 2.6rem;
+            border-radius: 9999px;
+
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+
+            border-width: 2px;
+            border-style: solid;
+
+            border-color: $border-color;
+
+            i {
+              color: #6f737b;
+              font-size: 1.175rem;
+            }
+          }
+        }
+        .input-box {
+          width: 100%;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          border-radius: 0.375rem;
+          border-width: 1.5px;
+          border-style: solid;
+          border-color: $border-color;
+          max-height: 15rem;
+          padding-left: 0.75rem;
+          padding-right: 0.75rem;
+          padding-top: 0.5rem;
+          padding-bottom: 0.5rem;
+          textarea {
+            outline: none;
+            border: none;
+            width: 100%;
+            font-size: 1.075rem;
+            line-height: 1.25rem;
+            padding-left: 1rem;
+            padding-top: 1.25rem;
+            padding-bottom: 1.25rem;
+            height: 60px;
+            padding-right: 1rem;
+            resize: none;
+            font-family: "Google Sans";
+            &::placeholder {
+              color: #9ca3af;
+              font-family: "Google Sans";
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
-.slide-up1{
+.loaders-status-div {
+  padding: 30px 30px;
+  width: 80%;
+  position: absolute;
+  bottom: 100px;
+  .section {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-bottom: 10px;
     animation-name: slideFadeUp;
     animation-duration: 0.6s;
     animation-timing-function: ease-out;
     animation-fill-mode: forwards;
-  }
-  @keyframes slideFadeUp {
-    0% {
-      transform: translateY(50px);
-      opacity: 0;
-    }
-    100% {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  
-  }
+    transition: 0.5s;
 
+    .loader-x {
+      width: 20px;
+      height: 20px;
+      border: 4px solid #bfc6d3;
+      border-bottom-color: transparent;
+      border-radius: 50%;
+      display: inline-block;
+      box-sizing: border-box;
+      animation: rotation 1s linear infinite;
+    }
 
-  .node-details-div{
-    position: absolute;
-    background-color: #fff;
-    width: 45vw;
-    height: 100vh;
-    right: 0;
-    box-shadow: 0px 0px 50px #edeef0;
-    padding: 20px 20px;
-    /* opacity: 0; */
-    z-index: 999;
-    animation-name: slideFadeLeft;
-    animation-duration: 0.6s;
-    animation-timing-function: ease-out;
-    animation-fill-mode: forwards;
-    transition: 1.5s;
+    @keyframes rotation {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+    i {
+      color: #47d138;
+      font-size: 1.275rem;
+    }
+    label {
+      font-family: "Google Sans";
+      font-size: 1.075rem;
+      color: #6f737b;
+      margin-left: 10px;
+    }
+  }
+}
+
+.slide-up1 {
+  animation-name: slideFadeUp;
+  animation-duration: 0.6s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+@keyframes slideFadeUp {
+  0% {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.node-details-div {
+  position: absolute;
+  background-color: #fff;
+  width: 45vw;
+  height: 100vh;
+  right: 0;
+  box-shadow: 0px 0px 50px #edeef0;
+  padding: 20px 20px;
+  /* opacity: 0; */
+  z-index: 999;
+  animation-name: slideFadeLeft;
+  animation-duration: 0.6s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+  transition: 1.5s;
+  overflow-x: hidden;
+  right: 0%;
+  &.hidden {
+    width: 0vw;
+    right: -10%;
     overflow-x: hidden;
-    right: 0%;
-    &.hidden{
-        width: 0vw;
-        right: -10%;
-        overflow-x: hidden;
-        transition: 1.5s;
+    transition: 1.5s;
+  }
+  &.full-screen {
+    width: 85vw;
+    transition: 0.5s;
+    height: 100vh;
+    box-shadow: none;
+  }
+  .node-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    .top {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      .left {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        a {
+          cursor: pointer;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          margin-right: 5px;
+          transition: 0.5s;
+          height: 32px;
+          width: 32px;
+          border-radius: 10px;
+          &:hover {
+            transition: 0.5s;
+            background-color: #f0f0f3;
+          }
+          i,
+          svg {
+            cursor: pointer;
+          }
+        }
+      }
     }
-    &.full-screen{
-        width: 85vw;
-        transition: 0.5s;
-        height: 100vh;
-        box-shadow: none;
-    }
-    .node-body{
+    .node-content {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       justify-content: flex-start;
-      .top{
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        .left{
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: flex-start;
-            a{
-                cursor: pointer;
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                justify-content: center;
-                margin-right: 5px;
-                transition: 0.5s;
-                height: 32px;
-                width: 32px;
-                border-radius: 10px;
-                &:hover{
-                    transition: 0.5s;
-                    background-color: #f0f0f3;
-                }
-                i,svg{
-                    cursor: pointer;
-                }
-            }
-        }
-
-      }
-      .node-content{
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        justify-content: flex-start;
-        padding: 20px 20px;
-        .title{
-          font-family: "Google Sans";
-          font-size: 30px;
-          color: #000;
-        }
+      padding: 20px 20px;
+      .title {
+        font-family: "Google Sans";
+        font-size: 30px;
+        color: #000;
       }
     }
+  }
+}
 
-  }
+.slide-left {
+  animation-name: slideFadeLeft;
+  animation-duration: 0.6s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+  z-index: 999999;
+}
 
-  .slide-left {
-    animation-name: slideFadeLeft;
-    animation-duration: 0.6s;
-    animation-timing-function: ease-out;
-    animation-fill-mode: forwards;
-    z-index: 999999;
+@keyframes slideFadeLeft {
+  0% {
+    transform: translateX(50px);
+    opacity: 0;
   }
-  
-  @keyframes slideFadeLeft {
-    0% {
-      transform: translateX(50px);
-      opacity: 0;
-    }
-    100% {
-      transform: translateX(0);
-      opacity: 1;
-    }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
   }
-  
-  .slide-right {
-    animation-name: slideFadeRight;
-    animation-duration: 0.6s;
-    animation-timing-function: ease-out;
-    animation-fill-mode: forwards;
+}
+
+.slide-right {
+  animation-name: slideFadeRight;
+  animation-duration: 0.6s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+
+@keyframes slideFadeRight {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
   }
-  
-  @keyframes slideFadeRight {
-    0% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-    100% {
-      transform: translateX(50px);
-      opacity: 0;
-    }
+  100% {
+    transform: translateX(50px);
+    opacity: 0;
   }
+}
+
+// Add animation for recording indicator
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 1;
+  }
+}
+
+.mic {
+  position: relative; // Make sure the mic is positioned relatively for absolute positioning of the indicator
+  // ... existing code ...
+}

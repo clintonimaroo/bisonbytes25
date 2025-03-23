@@ -1,0 +1,9 @@
+fastapi==0.115.11
+uvicorn==0.34.0
+python-dotenv==1.0.1
+python-multipart==0.0.20
+openai==1.68.2
+httpx==0.28.1
+livekit-api==0.8.2
+pydantic==2.10.6
+websockets==15.0.1
