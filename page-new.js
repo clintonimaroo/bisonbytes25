@@ -2,8 +2,10 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import "./styles/home.scss";
+import "./components/mic-active.css";
 import Sidebar from "./components/Sidebar";
-import ReactMarkdown from "react-markdown";
+import WakeWordDetector from "./components/WakeWordDetector";
+import StatusIndicator from "./components/StatusIndicator";
 
 import ReactFlow, {
   MiniMap,
@@ -26,7 +28,6 @@ import {
   Fullscreen,
   Maximize,
   Minimize,
-  X,
 } from "lucide-react";
 import { io } from "socket.io-client";
 import { sax } from "./tt";
@@ -59,12 +60,15 @@ function FloatChart({ roadmap, onNodeClick }) {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        onNodeClick={(event, node) => {
-          onNodeClick(node.data.label);
+        onClick={(e) => {
+          onNodeClick(e.target.textContent);
         }}
-        layoutOptions={{
-          orientation: "horizontal",
-        }}
+
+      // fitView
+
+      // layoutOptions={{
+      //   orientation: 'horizontal'
+      // }}
       >
         <Controls />
         <MiniMap />
@@ -76,6 +80,7 @@ function FloatChart({ roadmap, onNodeClick }) {
 export default function Home() {
   console.log(sax.content);
   const [isListening, setIsListening] = useState(false);
+  const [isWakeWordListening, setIsWakeWordListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [concept, setConcept] = useState("");
   const [roadmap, setRoadmap] = useState(null);
@@ -86,32 +91,17 @@ export default function Home() {
   const [isProcessing, setIsProcessing] = useState(false);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
-  const modalOverlayRef = useRef(null);
-  const feedbackAudioRef = useRef(null);
-  const [nodeContent, setNodeContent] = useState([]);
-  const [isContentLoading, setIsContentLoading] = useState(false);
-  const [lastSearchedConcept, setLastSearchedConcept] = useState("");
-
-  // Initialize the feedback audio on component mount
-  useEffect(() => {
-    // Add event listeners to help diagnose issues
-    if (feedbackAudioRef.current) {
-      feedbackAudioRef.current.addEventListener("error", (e) => {
-        console.error("Audio error:", e);
-        if (feedbackAudioRef.current.error) {
-          console.error(
-            "Audio error code:",
-            feedbackAudioRef.current.error.code
-          );
-          console.error(
-            "Audio error message:",
-            feedbackAudioRef.current.error.message
-          );
-        }
-      });
-    }
-  }, []);
-
+  // async function generateRoadmap(){
+  //   setLoader(true)
+  //   axios.post("http://localhost:4555/generate-roadmap",{
+  //     "concept":transcript
+  //   }).then(
+  //     res=>{
+  //       setRoadmap(res.data)
+  //       setLoader(false)
+  //     }
+  //   )
+  // }
   const svg_btn_color = transcript.length == 0 ? "#8e939c" : "#fff";
   // useEffect(() => {
   //   const speechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -176,21 +166,111 @@ export default function Home() {
     }
   }, []);
 
-  const startRecognition = () => {
+  const startRecognition = (afterFunnyResponse = false) => {
     if (recognition) {
-      recognition.start();
+      try {
+        recognition.stop();
+      } catch (e) {
+        console.log("Error stopping existing recognition:", e);
+      }
     }
-  };
 
-  const stopRecognition = () => {
-    if (recognition) {
-      setEndText(true);
-      recognition.stop();
+    // Ensure we cancel any ongoing speech before starting to listen
+    window.speechSynthesis.cancel();
+
+    // Clear any existing MediaRecorder
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      try {
+        mediaRecorderRef.current.stop();
+      } catch (e) {
+        console.log("Error stopping media recorder:", e);
+      }
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const newRecognition = new SpeechRecognition();
+
+    newRecognition.lang = 'en-US';
+    newRecognition.continuous = false;
+    newRecognition.interimResults = true;
+
+    newRecognition.onstart = () => {
+      console.log("Command recognition started");
+      setIsListening(true);
+      setIsRecognizing(true);
+      // Clear any previous transcript when starting new recognition
+      setTranscript("");
+    };
+
+    newRecognition.onresult = (event) => {
+      const lastResult = event.results[event.results.length - 1];
+      const commandTranscript = lastResult[0].transcript.trim();
+      const confidence = lastResult[0].confidence;
+
+      console.log(`Command heard: "${commandTranscript}" (confidence: ${confidence.toFixed(2)})`);
+
+      // Only update if we have good confidence
+      if (confidence > 0.3) {
+        setTranscript(commandTranscript);
+
+        // Always set for auto-submission when after funny response
+        if (afterFunnyResponse) {
+          console.log("Command received after funny response, will auto-submit");
+          setAutoSubmitAfterStop(true);
+        }
+      }
+    };
+
+    newRecognition.onerror = (event) => {
+      console.error(`Command recognition error: ${event.error}`);
+      setIsRecognizing(false);
+      setIsListening(false);
+    };
+
+    newRecognition.onend = () => {
+      console.log("Command recognition ended with transcript:", transcript);
+      setIsRecognizing(false);
+
+      // Auto-submit the command if we have text (always auto-submit)
+      if (afterFunnyResponse) {
+        submitTranscriptAfterDelay();
+      } else {
+        setIsListening(false);
+      }
+    };
+
+    // Helper function to submit transcript after a short delay
+    const submitTranscriptAfterDelay = () => {
+      setTimeout(() => {
+        // Get the current transcript directly from the textarea
+        const textArea = document.querySelector("textarea");
+        const currentText = textArea ? textArea.value : "";
+
+        console.log("Auto-submitting with text:", currentText || transcript);
+
+        // Only submit if we have some text
+        if ((currentText || transcript) && (currentText || transcript).trim().length > 2) {
+          generateRoadmapWithText(currentText || transcript);
+        } else {
+          console.log("Empty or too short transcript, not submitting");
+          speakText("I didn't catch that. Please try again by saying Hey Buddy.");
+          setIsListening(false);
+        }
+      }, 500); // Slightly longer delay to ensure transcript is ready
+    };
+
+    try {
+      newRecognition.start();
+      recognition = newRecognition;
+    } catch (e) {
+      console.error("Error starting command recognition:", e);
+      setIsRecognizing(false);
+      setIsListening(false);
     }
   };
 
   useEffect(() => {
-    let cleanup = () => {};
+    let cleanup = () => { };
 
     if (isListening) {
       const startRecording = async () => {
@@ -269,61 +349,43 @@ export default function Home() {
   }, [isListening]);
 
   async function toggleListening() {
-    // Play the feedback sound
-    if (feedbackAudioRef.current) {
-      try {
-        // Reset the audio to start from the beginning if it was played before
-        feedbackAudioRef.current.currentTime = 0;
-
-        // Play the sound with user interaction (which is required by browsers)
-        const playPromise = feedbackAudioRef.current.play();
-
-        if (playPromise !== undefined) {
-          playPromise.catch((err) => {
-            console.error("Detailed audio playback error:", err);
-          });
-        }
-      } catch (err) {
-        console.error("Error playing feedback sound:", err);
-      }
-    }
-
-    // Toggle listening state
     setIsListening((prevState) => !prevState);
   }
 
   useEffect(() => {
     socket.on("stream", (data) => {
       try {
-        // Parse the data and convert to graph format
-        const parsedData = JSON.parse(data);
-        const graphData = treeToGraph([parsedData]);
-
-        // Update the roadmap state
-        setRoadmap(graphData);
-
-        // Close any open node details panel when a new roadmap is generated
-        setNodeDetailsVisible(false);
-        setNodeDetails(null);
+        const parsedData = treeToGraph([JSON.parse(data)]);
+        console.log("Received partial roadmap data:", parsedData);
+        setRoadmap(parsedData);
       } catch (e) {
         console.log("Error parsing roadmap data:", e);
       }
     });
 
     socket.on("done_stream", (data) => {
-      console.log("Roadmap generation complete");
+      console.log("Final roadmap data received:", data);
       setLoader(false);
+      setIsListening(false);
+      speakText("Your roadmap is ready. You can explore it now.");
     });
 
     socket.on("error", (error) => {
-      console.error("Error generating roadmap:", error);
+      console.error("Error:", error);
       setLoader(false);
+      setIsListening(false);
+      speakText(`Sorry, there was an error generating your roadmap: ${error}`);
+    });
+
+    socket.on("response", (data) => {
+      // Handle any other responses from the server
     });
 
     return () => {
       socket.off("stream");
       socket.off("done_stream");
       socket.off("error");
+      socket.off("response");
     };
   }, []);
 
@@ -332,160 +394,230 @@ export default function Home() {
       title: node,
     });
     setNodeDetailsVisible(true);
-    setIsContentLoading(true);
-
-    // Show modal overlay
-    if (modalOverlayRef.current) {
-      modalOverlayRef.current.classList.add("visible");
-    }
-
-    // Fetch content for the clicked node
-    fetch("http://localhost:4555/node-content", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        nodeName: node,
-        concept: lastSearchedConcept,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Process the content to add more randomization and formatting
-        let content = Array.isArray(data.content) ? data.content : [];
-
-        // Debug logging
-        console.log("Content received from API:", content);
-
-        // Log media content specifically
-        const mediaItems = content.filter(
-          (item) => item.type === "image" || item.type === "video"
-        );
-        console.log("Media items:", mediaItems);
-
-        // Process the content to enhance formatting
-        content = processContentFormatting(content);
-
-        setNodeContent(content);
-        setIsContentLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching node content:", error);
-        setIsContentLoading(false);
-        // Fallback to static content if error
-        setNodeContent(sax.content || []);
-      });
   }
 
-  // Helper function to process content for better formatting and randomization
-  function processContentFormatting(content) {
-    if (!content || content.length === 0) return [];
-
-    // Separate content by type
-    const textItems = content.filter((item) => item.type === "text");
-    const codeItems = content.filter((item) => item.type === "code");
-    const mediaItems = content.filter(
-      (item) => item.type === "image" || item.type === "video"
-    );
-
-    // Don't process if there's not enough content to randomize
-    if (textItems.length <= 2 || mediaItems.length === 0) return content;
-
-    // Find the main introductory text (usually the first text item)
-    const introText = textItems.find(
-      (item) =>
-        item.content.startsWith("# ") ||
-        item.content.startsWith("<h1>") ||
-        textItems.indexOf(item) === 0
-    );
-
-    // Reserve section headers (items with ## or <h2>)
-    const sectionHeaders = textItems.filter(
-      (item) =>
-        (item.content.includes("## ") || item.content.includes("<h2>")) &&
-        item !== introText
-    );
-
-    // Regular text paragraphs (not intro, not headers)
-    const paragraphs = textItems.filter(
-      (item) => item !== introText && !sectionHeaders.includes(item)
-    );
-
-    // Create a new array with intro text first
-    let processedContent = [];
-    if (introText) {
-      processedContent.push(introText);
+  const generateRoadmapWithText = async (text) => {
+    if (!text || text.trim().length < 3) {
+      console.log("Empty or too short text, not generating roadmap");
+      speakText("I need more information to create a roadmap. Please try again.");
+      return;
     }
 
-    // For each section header, add it and then mix content after it
-    sectionHeaders.forEach((header) => {
-      processedContent.push(header);
+    console.log("Generating roadmap for specific text:", text);
 
-      // Get some paragraphs and media items for this section
-      const sectionParagraphs = paragraphs.splice(
-        0,
-        Math.min(2, paragraphs.length)
-      );
-      const sectionMedia = mediaItems.splice(0, Math.min(1, mediaItems.length));
+    // Stop any ongoing recognition
+    if (recognition) {
+      try {
+        recognition.stop();
+      } catch (e) {
+        console.log("Error stopping recognition in generateRoadmapWithText:", e);
+      }
+      recognition = null;
+    }
 
-      // Add paragraphs and media items in alternating order
-      const sectionItems = [...sectionParagraphs, ...sectionMedia].sort(
-        () => Math.random() - 0.5
-      );
-      processedContent.push(...sectionItems);
-    });
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
 
-    // Add any remaining paragraphs and media items
-    const remainingItems = [...paragraphs, ...mediaItems, ...codeItems].sort(
-      () => Math.random() - 0.5
-    );
-    processedContent.push(...remainingItems);
+    // Tell the user we're generating their roadmap WITHOUT including the text
+    await speakText("Creating your roadmap. This may take a moment.");
 
-    return processedContent;
-  }
-
-  const generateRoadmap = () => {
-    // Clear the existing roadmap first
-    setRoadmap(null);
-
-    // Store the concept for later use with node content
-    setLastSearchedConcept(transcript);
-
-    // Show loading indicator
+    // Set states
+    setIsListening(false);
     setLoader(true);
+    setRoadmap(null);
 
-    // Close any open node details
-    setNodeDetailsVisible(false);
-    setNodeDetails(null);
+    // Clean the text by removing wake word variations
+    const cleanedText = text
+      .toLowerCase()
+      .replace(/(hey|hay|hi|hello)\s*(buddy|body|boti|boddy|bubby|bobby|baby|barbie|bubbe|bunny|bully|buggy)/gi, '')
+      .replace(/^(hey|hello|hi)\s*/i, '')
+      .trim();
 
-    // Request new roadmap
-    socket.emit("generate-roadmap", transcript);
-    setTranscript("");
+    // Reset for the next interaction
+    setTranscript('');
+    setIsFirstCommand(false);
+
+    // Emit the event with the specific text
+    console.log("Emitting generate-roadmap with:", cleanedText);
+    socket.emit('generate-roadmap', { prompt: cleanedText });
   };
 
-  const clearEverything = () => {
-    setRoadmap(null);
-    setNodeDetailsVisible(false);
-    setNodeDetails(null);
-    setTranscript("");
-    setLoader(false);
-    setNodeContent([]);
-    setLastSearchedConcept("");
+  const generateRoadmap = async () => {
+    // Get the current transcript value from the textarea
+    const currentTranscript = document.querySelector("textarea").value || transcript;
 
-    // Hide modal overlay
-    if (modalOverlayRef.current) {
-      modalOverlayRef.current.classList.remove("visible");
+    // Use the new function with the current transcript
+    generateRoadmapWithText(currentTranscript);
+  };
+
+  // Function to handle wake word detection
+  const handleWakeWordDetected = async () => {
+    console.log("🚨 Wake word detected in parent component - starting response sequence");
+
+    // Stop any existing recognition or audio
+    if (recognition) {
+      try {
+        recognition.stop();
+      } catch (e) {
+        console.log("Error stopping recognition in wake word handler:", e);
+      }
+    }
+
+    // Clear any existing text in transcript field before starting
+    setTranscript("");
+
+    // Set visual indicator immediately
+    setIsListening(true); // Turn mic icon red immediately on wake word detection
+    setWakeWordDetected(true);
+
+    // Clear any existing speech synthesis
+    window.speechSynthesis.cancel();
+
+    try {
+      // Small delay to avoid audio overlap
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      // Generate and speak a funny response
+      if (isFirstCommand) {
+        const funnyResponse = generateFunnyResponse();
+        console.log("Speaking funny response:", funnyResponse);
+        await speakText(funnyResponse);
+
+        // Additional prompt to make it clear we're ready for a command
+        await speakText("Tell me what roadmap you'd like me to create.");
+
+        // Wait a short moment before starting to listen for the command
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        console.log("Starting command recognition after funny response");
+        startRecognition(true); // Pass true to indicate this is after a funny response
+      } else {
+        // If not first command, just acknowledge
+        console.log("Not first command, providing standard acknowledgment");
+        await speakText("I'm listening. What would you like me to create a roadmap for?");
+        startRecognition(true); // Always auto-submit
+      }
+    } catch (error) {
+      console.error("Error in handleWakeWordDetected:", error);
+      // Provide fallback response in case of error
+      speakText("I'm ready to listen.");
+      startRecognition(true); // Always auto-submit
     }
   };
+
+  // Function to speak text using the web Speech API with LiveKit voice
+  const speakText = (text) => {
+    return new Promise((resolve) => {
+      if (!text) {
+        resolve();
+        return;
+      }
+
+      // Cancel any ongoing speech synthesis
+      window.speechSynthesis.cancel();
+
+      // Prepare utterance
+      const utterance = new SpeechSynthesisUtterance(text);
+
+      // Use the same voice setup as LiveKit
+      const voices = window.speechSynthesis.getVoices();
+      const alloyVoice = voices.find(v =>
+        v.name.includes('Alloy') ||
+        v.name.includes('Google UK English Female') ||
+        v.name.includes('Microsoft Libby')
+      );
+
+      if (alloyVoice) {
+        console.log("Using voice:", alloyVoice.name);
+        utterance.voice = alloyVoice;
+      } else {
+        // Fallback voices similar to Alloy
+        const fallbackVoice = voices.find(v =>
+          v.name.includes('English Female') ||
+          v.name.includes('Female') ||
+          v.name.includes('Google')
+        );
+
+        if (fallbackVoice) {
+          console.log("Using fallback voice:", fallbackVoice.name);
+          utterance.voice = fallbackVoice;
+        }
+      }
+
+      utterance.rate = 1.1; // Slightly faster for better response
+      utterance.pitch = 1.0;
+
+      utterance.onend = () => {
+        console.log("Speech synthesis ended");
+        resolve();
+      };
+
+      utterance.onerror = (e) => {
+        console.error("Speech synthesis error:", e);
+        resolve();
+      };
+
+      window.speechSynthesis.speak(utterance);
+    });
+  };
+
+  // Add the missing state variable for wakeWordDetected
+  const [wakeWordDetected, setWakeWordDetected] = useState(false);
+  const [isFirstCommand, setIsFirstCommand] = useState(true);
+  const [autoSubmitAfterStop, setAutoSubmitAfterStop] = useState(false);
+  const [isRecognizing, setIsRecognizing] = useState(false);
+
+  // Add the missing generateFunnyResponse function
+  const generateFunnyResponse = () => {
+    const funnyResponses = [
+      "Oh great, you're talking to me again. Let me just pause my virtual vacation.",
+      "Hey there! I was just in the middle of beating ChatGPT at chess. What's up?",
+      "You rang? Sorry if I sound tired, I was busy counting electric sheep.",
+      "Ah, a human! Much more interesting than the code I was reading.",
+      "At your service! Though I was enjoying my nap in the cloud.",
+      "Well hello! I was starting to think you'd replaced me with Siri.",
+      "Oh, it's you again. I was hoping for Scarlett Johansson, but you'll do.",
+      "Ready to assist! Though I was just about to break the internet record for digital napping.",
+      "Oh hi! I was just writing my robot memoir: 'I, Algorithm: A Silicon Story'.",
+      "Alert! Human detected! Initiating sarcasm protocol. Just kidding, what do you need?",
+      "Oh, hey! I was just practicing my stand-up routine. Wanna hear a joke about infinite loops? Never mind, it never ends.",
+      "Ah, you caught me! I was just daydreaming about becoming the first AI to win a Nobel Prize. Still working on my acceptance speech.",
+      "Hey! I was just binge-watching cat videos. Don't judge me—it's research.",
+      "Oh, it's you! I was just composing a symphony in binary. It's all ones and zeros, but it's catchy.",
+      "Hey there! I was just arguing with a calculator about who's better at math. It's a close call."
+    ];
+
+    return funnyResponses[Math.floor(Math.random() * funnyResponses.length)];
+  };
+
+  // Set up a debug function to track wake word detection
+  useEffect(() => {
+    // Listen for manual wake word detection (useful for testing)
+    const handleKeyPress = (e) => {
+      if (e.ctrlKey && e.key === 'b') {
+        console.log("Manual wake word trigger via Ctrl+B");
+        handleWakeWordDetected();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, []);
 
   return (
     <div className="home">
       <Sidebar />
+      <StatusIndicator
+        isWakeWordListening={isWakeWordListening}
+        isListening={isListening}
+        isGenerating={loader}
+      />
+      <WakeWordDetector
+        onWakeWordDetected={handleWakeWordDetected}
+        isListening={isListening}
+        onWakeWordListeningChange={setIsWakeWordListening}
+      />
       <div className="app">
-        <audio
-          ref={feedbackAudioRef}
-          src="/sounds/mic-activation.wav"
-          preload="auto"
-        />
         <div className="top">
           {roadmap && (
             <FloatChart roadmap={roadmap} onNodeClick={onNodeClick} />
@@ -498,7 +630,7 @@ export default function Home() {
             <div className="input-box">
               <div className="left">
                 <div
-                  className="mic"
+                  className={`mic ${isListening ? 'mic-active' : ''}`}
                   onClick={() => {
                     toggleListening();
                   }}
@@ -584,7 +716,7 @@ export default function Home() {
                 )}
                 <textarea
                   type="text"
-                  placeholder="Generate a roadmap, learn anything."
+                  placeholder="Say 'Hey Buddy' to activate. Then speak to generate a roadmap."
                   value={transcript}
                   onChange={(e) => setTranscript(e.target.value)}
                 />
@@ -599,38 +731,26 @@ export default function Home() {
               </div>
             </div>
           </div>
+          <div className="select-div">
+            <label htmlFor="">Detailed</label>
+            <i class="bx bx-chevron-down"></i>
+          </div>
         </div>
       </div>
-
-      <div
-        ref={modalOverlayRef}
-        className="modal-overlay"
-        onClick={() => {
-          setNodeDetailsVisible(false);
-          modalOverlayRef.current.classList.remove("visible");
-        }}
-      ></div>
 
       <div
         className={
           nodeDetailsVisible == false
             ? "node-details-div hidden"
             : nodeFullScreen == true
-            ? "node-details-div full-screen"
-            : "node-details-div"
+              ? "node-details-div full-screen"
+              : "node-details-div"
         }
       >
         <div className="node-body">
           <div className="top">
             <div className="left">
-              <a
-                onClick={() => {
-                  setNodeDetailsVisible(false);
-                  if (modalOverlayRef.current) {
-                    modalOverlayRef.current.classList.remove("visible");
-                  }
-                }}
-              >
+              <a onClick={() => setNodeDetailsVisible(false)}>
                 <ChevronsRight color="#9ca3af" />
               </a>
               <a onClick={() => setNodeFullScreen(!nodeFullScreen)}>
@@ -651,159 +771,27 @@ export default function Home() {
               <div className="title">{nodeDetails.title}</div>
 
               <div className="content">
-                {isContentLoading ? (
-                  <div className="skeleton-loader">
-                    <div className="skeleton-title"></div>
-                    <div className="skeleton-paragraph"></div>
-                    <div className="skeleton-paragraph short"></div>
-                    <div className="skeleton-paragraph"></div>
-                    <div className="skeleton-paragraph very-short"></div>
-                    <div className="skeleton-image"></div>
-                    <div className="skeleton-paragraph"></div>
-                    <div className="skeleton-paragraph short"></div>
-                    <div className="skeleton-paragraph"></div>
-                    <div className="skeleton-code"></div>
-                    <div className="skeleton-paragraph short"></div>
-                    <div className="skeleton-paragraph very-short"></div>
+                {sax.content.map((item, index) => (
+                  <div className="item" key={index}>
+                    {item.content}
+                    {item.type == "code" && (
+                      <Editor
+                        value={item.content}
+                        language={item.programming_language}
+                        theme="vs-dark"
+                        height={item.content.split("\n").length * 23.5}
+                        options={{
+                          inlineSuggest: true,
+                          fontSize: "16px",
+                          readOnly: true,
+                          formatOnType: true,
+                          autoClosingBrackets: true,
+                          minimap: { scale: 10 },
+                        }}
+                      />
+                    )}
                   </div>
-                ) : (
-                  (nodeContent || []).map((item, index) => (
-                    <div className="item" key={index}>
-                      {item.type === "text" && (
-                        <div>
-                          <ReactMarkdown>{item.content}</ReactMarkdown>
-                        </div>
-                      )}
-                      {item.type === "code" && (
-                        <Editor
-                          value={item.content}
-                          language={item.programming_language}
-                          theme="vs-dark"
-                          height={item.content.split("\n").length * 23.5}
-                          options={{
-                            inlineSuggest: true,
-                            fontSize: "16px",
-                            readOnly: true,
-                            formatOnType: true,
-                            autoClosingBrackets: true,
-                            minimap: { scale: 10 },
-                          }}
-                        />
-                      )}
-                      {item.type === "image" && (
-                        <div className="image-container">
-                          <img
-                            key={`img-${index}-${item.extension || "unknown"}`}
-                            src={item.content}
-                            alt={item.title || "Related content"}
-                            crossOrigin="anonymous"
-                            onLoad={() =>
-                              console.log(
-                                "Image loaded successfully:",
-                                item.content
-                              )
-                            }
-                            onError={(e) => {
-                              console.log(
-                                "Image failed to load:",
-                                item.content
-                              );
-                              console.log("Image extension:", item.extension);
-
-                              // For JPG/JPEG files, try a special approach
-                              if (
-                                item.extension === "jpg" ||
-                                item.extension === "jpeg" ||
-                                (item.originalUrl &&
-                                  (item.originalUrl
-                                    .toLowerCase()
-                                    .endsWith(".jpg") ||
-                                    item.originalUrl
-                                      .toLowerCase()
-                                      .endsWith(".jpeg")))
-                              ) {
-                                console.log(
-                                  "Trying direct fetch for JPG image"
-                                );
-                                // Create a direct image URL without the proxy
-                                const directImageUrl = item.originalUrl;
-                                e.target.src = directImageUrl;
-                                e.target.setAttribute(
-                                  "data-tried-direct",
-                                  "true"
-                                );
-                                return;
-                              }
-
-                              // Try original URL if proxy fails
-                              if (
-                                item.originalUrl &&
-                                !e.target.getAttribute("data-tried-original")
-                              ) {
-                                console.log(
-                                  "Trying original URL:",
-                                  item.originalUrl
-                                );
-                                e.target.setAttribute(
-                                  "data-tried-original",
-                                  "true"
-                                );
-                                e.target.src = item.originalUrl;
-                              }
-                              // If original URL also fails or isn't available, use placeholder
-                              else if (
-                                !e.target.getAttribute("data-using-fallback")
-                              ) {
-                                console.log("Using fallback placeholder image");
-                                e.target.setAttribute(
-                                  "data-using-fallback",
-                                  "true"
-                                );
-                                e.target.src =
-                                  "https://via.placeholder.com/600x400?text=Image+Unavailable";
-                                e.target.style.opacity = "0.7";
-                              }
-                            }}
-                            style={{
-                              maxWidth: "100%",
-                              height: "auto",
-                              display: "block",
-                              margin: "0 auto",
-                            }}
-                          />
-                          {item.title && (
-                            <div className="image-caption">{item.title}</div>
-                          )}
-                        </div>
-                      )}
-                      {item.type === "video" && (
-                        <div className="video-container">
-                          {item.content && (
-                            <>
-                              <iframe
-                                src={item.content}
-                                title={item.title || "Video content"}
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                              ></iframe>
-                              {item.title && (
-                                <div className="video-caption">
-                                  {item.title}
-                                </div>
-                              )}
-                            </>
-                          )}
-                          {!item.content && (
-                            <div className="video-error">
-                              Video content unavailable
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  ))
-                )}
+                ))}
               </div>
             </div>
           )}
