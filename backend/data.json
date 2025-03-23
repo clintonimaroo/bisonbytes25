@@ -1,37 +1,32 @@
 
 
         {
-          "title": "Python Roadmap for Creating Automated Python Learning Path",
+          "title": "Introduction to FIFA",
           "children": [
             {
-              "title": "Fundamentals of Python",
+              "title": "Basic Controls",
               "children": [
                 {
-                  "title": "Python Setup",
-                  "children": [
-                    {
-                      "title": "Installing Python",
-                      "children": []
-                    },
-                    {
-                      "title": "Setting up IDE",
-                      "children": []
-                    }
-                  ]
+                  "title": "Understanding Controller Layout",
+                  "children": []
                 },
                 {
-                  "title": "Basic Python Syntax",
+                  "title": "Fundamental Moves",
                   "children": [
                     {
-                      "title": "Variables and Data Types",
+                      "title": "Passing",
                       "children": []
                     },
                     {
-                      "title": "Control Structures",
+                      "title": "Shooting",
                       "children": []
                     },
                     {
-                      "title": "Functions and Modules",
+                      "title": "Defending",
+                      "children": []
+                    },
+                    {
+                      "title": "Dribbling",
                       "children": []
                     }
                   ]
@@ -39,30 +34,30 @@
               ]
             },
             {
-              "title": "Intermediate Python Concepts",
+              "title": "Gameplay Strategies",
               "children": [
                 {
-                  "title": "Object-Oriented Programming",
+                  "title": "Offensive Strategies",
                   "children": [
                     {
-                      "title": "Classes and Objects",
+                      "title": "Build-Up Play",
                       "children": []
                     },
                     {
-                      "title": "Inheritance",
+                      "title": "Finishing Tactics",
                       "children": []
                     }
                   ]
                 },
                 {
-                  "title": "File Operations",
+                  "title": "Defensive Strategies",
                   "children": [
                     {
-                      "title": "Reading Files",
+                      "title": "Tackling Techniques",
                       "children": []
                     },
                     {
-                      "title": "Writing Files",
+                      "title": "Positioning",
                       "children": []
                     }
                   ]
@@ -70,30 +65,34 @@
               ]
             },
             {
-              "title": "Advanced Python Topics",
+              "title": "Advanced Techniques",
               "children": [
                 {
-                  "title": "Data Structures",
+                  "title": "Skill Moves",
                   "children": [
                     {
-                      "title": "Lists and Tuples",
+                      "title": "Basic Skill Moves",
                       "children": []
                     },
                     {
-                      "title": "Dictionaries and Sets",
+                      "title": "Advanced Skill Moves",
                       "children": []
                     }
                   ]
                 },
                 {
-                  "title": "Error Handling",
+                  "title": "Set Pieces Mastery",
                   "children": [
                     {
-                      "title": "Exceptions",
+                      "title": "Free Kicks",
                       "children": []
                     },
                     {
-                      "title": "Logging",
+                      "title": "Corners",
+                      "children": []
+                    },
+                    {
+                      "title": "Penalties",
                       "children": []
                     }
                   ]
@@ -101,33 +100,28 @@
               ]
             },
             {
-              "title": "Practical Projects",
+              "title": "Team Management",
               "children": [
                 {
-                  "title": "Automated Task Scripts",
-                  "children": [
-                    {
-                      "title": "Web Scraping",
-                      "children": []
-                    },
-                    {
-                      "title": "Data Analysis Scripts",
-                      "children": []
-                    }
-                  ]
+                  "title": "Squad Building",
+                  "children": []
                 },
                 {
-                  "title": "Simple Applications",
-                  "children": [
-                    {
-                      "title": "Command-line Applications",
-                      "children": []
-                    },
-                    {
-                      "title": "GUI Applications",
-                      "children": []
-                    }
-                  ]
+                  "title": "Tactical Customization",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "title": "Competitive Play",
+              "children": [
+                {
+                  "title": "Player vs Player Matches",
+                  "children": []
+                },
+                {
+                  "title": "Tournaments and Leagues",
+                  "children": []
                 }
               ]
             }

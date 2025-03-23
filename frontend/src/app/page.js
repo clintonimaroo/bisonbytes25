@@ -300,13 +300,15 @@ export default function Home() {
     setNodeDetails({
       title: node,
     });
-    setNodeDetailsVisible(true);
     setIsContentLoading(true);
-
-    // Show modal overlay
+    
+    // Show modal overlay first
     if (modalOverlayRef.current) {
       modalOverlayRef.current.classList.add("visible");
     }
+    
+    // Set node details visible immediately for smooth slide-in
+    setNodeDetailsVisible(true);
 
     // Fetch content for the clicked node
     fetch("http://localhost:4555/node-content", {
@@ -322,15 +324,6 @@ export default function Home() {
         // Process the content to add more randomization and formatting
         let content = Array.isArray(data.content) ? data.content : [];
 
-        // Debug logging
-        console.log("Content received from API:", content);
-
-        // Log media content specifically
-        const mediaItems = content.filter(
-          (item) => item.type === "image" || item.type === "video"
-        );
-        console.log("Media items:", mediaItems);
-
         // Process the content to enhance formatting
         content = processContentFormatting(content);
 
@@ -344,6 +337,18 @@ export default function Home() {
         setNodeContent(sax.content || []);
       });
   }
+
+  const closeNodeDetails = () => {
+    // First set the node details to hidden state to trigger slide-out
+    setNodeDetailsVisible(false);
+    
+    // Then remove the modal overlay after a delay that matches the transition duration
+    setTimeout(() => {
+      if (modalOverlayRef.current) {
+        modalOverlayRef.current.classList.remove("visible");
+      }
+    }, 350);
+  };
 
   // Helper function to process content for better formatting and randomization
   function processContentFormatting(content) {
@@ -433,17 +438,11 @@ export default function Home() {
 
   const clearEverything = () => {
     setRoadmap(null);
-    setNodeDetailsVisible(false);
-    setNodeDetails(null);
+    closeNodeDetails();
     setTranscript("");
     setLoader(false);
     setNodeContent([]);
     setLastSearchedConcept("");
-
-    // Hide modal overlay
-    if (modalOverlayRef.current) {
-      modalOverlayRef.current.classList.remove("visible");
-    }
   };
 
   return (
@@ -574,10 +573,7 @@ export default function Home() {
       <div
         ref={modalOverlayRef}
         className="modal-overlay"
-        onClick={() => {
-          setNodeDetailsVisible(false);
-          modalOverlayRef.current.classList.remove("visible");
-        }}
+        onClick={closeNodeDetails}
       ></div>
 
       <div
@@ -593,12 +589,7 @@ export default function Home() {
           <div className="top">
             <div className="left">
               <a
-                onClick={() => {
-                  setNodeDetailsVisible(false);
-                  if (modalOverlayRef.current) {
-                    modalOverlayRef.current.classList.remove("visible");
-                  }
-                }}
+                onClick={closeNodeDetails}
               >
                 <ChevronsRight color="#9ca3af" />
               </a>
