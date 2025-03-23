@@ -106,6 +106,37 @@ export default function Sidebar() {
                 </button>
                     {/** Chat History */}
                     <div className="chat-history">
+
+                    {searchQuery && Object.keys(filteredChatHistory).length === 0 && (
+                            <div>No results found</div>
+                        )}
+                    {/* {(searchQuery && Object.keys(filteredChatHistory).length > 0) ? (
+                        Object.keys(filteredChatHistory).map((group, index) => (
+                            <div className="chat-history-group" key={index}>
+                                <h4>{group}</h4>
+                                {filteredChatHistory[group].map((chat, index) => (
+                                    <div className="chat-history-item" key={index}>
+                                        <div className="chat-history-item-text">
+                                            {chat.title}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ))
+                    ) : (
+                        Object.keys(chatHistory).map((group, index) => (
+                            <div className="chat-history-group" key={index}>
+                                <h4>{group}</h4>
+                                {chatHistory[group].map((chat, index) => (
+                                    <div className="chat-history-item" key={index}>
+                                        <div className="chat-history-item-text">
+                                            {chat.title}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ))
+                    )} */}
                         {(searchQuery ? Object.keys(filteredChatHistory) : Object.keys(chatHistory)).map((group, index) => (
                             <div className="chat-history-group" key={index}>
                                 <h4>{group}</h4>
@@ -118,9 +149,6 @@ export default function Sidebar() {
                                 ))}
                             </div>
                         ))}
-                        {searchQuery && Object.keys(filteredChatHistory).length === 0 && (
-                            <div>No results found</div>
-                        )}
                     </div>
                 </div>
             </div>

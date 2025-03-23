@@ -353,7 +353,10 @@
   transition: width 0.3s ease;
 }
 .sidebar.minimized {
-  width: 50px;
+  width: 0px;
+}
+.sidebar.minimized .sidebar-content {
+  display: none;
 }
 .sidebar .minimize-button {
   position: absolute;
@@ -386,9 +389,9 @@
 .chat-history::-webkit-scrollbar {
   width: 8px;
 }
-.chat-history h3 {
-  margin-bottom: 10px;
-  font-size: 1.2em;
+.chat-history h4 {
+  margin-bottom: 5px;
+  font-size: 0.9em;
 }
 .chat-history .chat-history-item {
   white-space: nowrap;

@@ -1,42 +1,57 @@
 
 
-        
-        {
-          "title": "Introduction to Pasta Bolognese",
-          "children": [
+
+
+
+      {
+        "title": "Teach Me Python: A Comprehensive Roadmap",
+        "children": [
             {
-              "title": "Understanding Ingredients",
+              "title": "Basics of Python Programming",
               "children": [
                 {
-                  "title": "Essential Ingredients",
+                  "title": "Setting Up Python Environment",
                   "children": [
                     {
-                      "title": "Meat Selection",
+                      "title": "Installing Python",
                       "children": []
                     },
                     {
-                      "title": "Tomatoes Selection",
-                      "children": []
-                    },
-                    {
-                      "title": "Herbs and Spices",
-                      "children": []
-                    },
-                    {
-                      "title": "Pasta Types",
+                      "title": "Setting Up IDE (e.g., VS Code, PyCharm)",
                       "children": []
                     }
                   ]
                 },
                 {
-                  "title": "Finding Quality Ingredients",
+                  "title": "Python Syntax and Basics",
                   "children": [
                     {
-                      "title": "Local Farmers' Market",
+                      "title": "Variables and Data Types",
                       "children": []
                     },
                     {
-                      "title": "Grocery Store Selection",
+                      "title": "Basic Operators",
+                      "children": []
+                    },
+                    {
+                      "title": "Control Structures (if, for, while)",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "title": "Understanding Functions",
+                  "children": []
+                },
+                {
+                  "title": "Working with Data Structures",
+                  "children": [
+                    {
+                      "title": "Lists, Tuples, and Sets",
+                      "children": []
+                    },
+                    {
+                      "title": "Dictionaries",
                       "children": []
                     }
                   ]
@@ -44,34 +59,38 @@
               ]
             },
             {
-              "title": "Basic Cooking Techniques",
+              "title": "Intermediate Concepts",
               "children": [
                 {
-                  "title": "Preparing Ingredients",
+                  "title": "File Handling",
+                  "children": []
+                },
+                {
+                  "title": "Error and Exception Handling",
+                  "children": []
+                },
+                {
+                  "title": "Modules and Packages",
                   "children": [
                     {
-                      "title": "Chopping and Dicing",
+                      "title": "Importing Modules",
                       "children": []
                     },
                     {
-                      "title": "Browning Meat",
-                      "children": []
-                    },
-                    {
-                      "title": "Simmering Sauce",
+                      "title": "Creating Packages",
                       "children": []
                     }
                   ]
                 },
                 {
-                  "title": "Essential Cooking Equipment",
+                  "title": "Object-Oriented Programming",
                   "children": [
                     {
-                      "title": "Choosing the Right Pan",
+                      "title": "Classes and Objects",
                       "children": []
                     },
                     {
-                      "title": "Kitchen Utensils",
+                      "title": "Inheritance and Polymorphism",
                       "children": []
                     }
                   ]
@@ -79,99 +98,99 @@
               ]
             },
             {
-              "title": "Advanced Techniques",
+              "title": "Advanced Python",
               "children": [
                 {
-                  "title": "Flavor Enhancements",
-                  "children": [
-                    {
-                      "title": "Adding Wine",
-                      "children": []
-                    },
-                    {
-                      "title": "Herb Infusion",
-                      "children": []
-                    }
-                  ]
+                  "title": "Decorators and Generators",
+                  "children": []
                 },
                 {
-                  "title": "Time Management in Cooking",
-                  "children": [
-                    {
-                      "title": "Planning Your Cooking Timeline",
-                      "children": []
-                    },
-                    {
-                      "title": "Efficient Cleanup",
-                      "children": []
-                    }
-                  ]
+                  "title": "File Manipulation and CSV Handling",
+                  "children": []
+                },
+                {
+                  "title": "Regular Expressions",
+                  "children": []
+                },
+                {
+                  "title": "Unit Testing",
+                  "children": []
                 }
               ]
             },
             {
-              "title": "Final Presentation and Serving",
+              "title": "Web Development with Python",
               "children": [
                 {
-                  "title": "Plating Techniques",
-                  "children": [
-                    {
-                      "title": "Arranging Pasta",
-                      "children": []
-                    },
-                    {
-                      "title": "Garnishing",
-                      "children": []
-                    }
-                  ]
+                  "title": "Introduction to Web Development",
+                  "children": []
                 },
                 {
-                  "title": "Pairing with Sides and Wines",
-                  "children": [
-                    {
-                      "title": "Side Dish Ideas",
-                      "children": []
-                    },
-                    {
-                      "title": "Wine Pairing Suggestions",
-                      "children": []
-                    }
-                  ]
+                  "title": "Flask Framework Basics",
+                  "children": []
+                },
+                {
+                  "title": "Django Framework Introduction",
+                  "children": []
+                },
+                {
+                  "title": "APIs with Flask/Django",
+                  "children": []
                 }
               ]
             },
             {
-              "title": "Mastery and Innovation",
+              "title": "Data Science with Python",
               "children": [
                 {
-                  "title": "Experimenting with Variations",
+                  "title": "Data Analysis Libraries",
                   "children": [
                     {
-                      "title": "Vegetarian Bolognese",
+                      "title": "NumPy",
                       "children": []
                     },
                     {
-                      "title": "Spicy Bolognese",
+                      "title": "Pandas",
                       "children": []
                     }
                   ]
                 },
                 {
-                  "title": "Hosting a Dinner Party",
+                  "title": "Data Visualization",
                   "children": [
                     {
-                      "title": "Menu Planning",
+                      "title": "Matplotlib",
                       "children": []
                     },
                     {
-                      "title": "Cooking for a Crowd",
+                      "title": "Seaborn",
                       "children": []
                     }
                   ]
+                },
+                {
+                  "title": "Machine Learning with Scikit-Learn",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "title": "Project and Version Control",
+              "children": [
+                {
+                  "title": "Git Basics",
+                  "children": []
+                },
+                {
+                  "title": "GitHub for Collaboration",
+                  "children": []
+                },
+                {
+                  "title": "Project Structuring",
+                  "children": []
                 }
               ]
             }
           ]
         }
-      
       
