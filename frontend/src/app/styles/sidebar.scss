@@ -7,7 +7,7 @@ $border-color: #e5e7eb;
     border-style: solid;
     min-height: 100vh;
     position: relative;
-    transition: width 0.3s ease;
+    transition: width 0.4s ease;
 
     &.minimized {
         width: 0px; 
@@ -27,6 +27,7 @@ $border-color: #e5e7eb;
         cursor: pointer;
         border-radius: 50%;
         transition: transform 0.3s ease;
+        z-index: 1000;
 
         i {
             font-size: 14px;
@@ -69,6 +70,41 @@ $border-color: #e5e7eb;
         &:hover {
             background-color: #f0f0f0; // Change background on hover
         }
+    }
+}
+
+.sidebar-content {
+    display: flex; // Ensure the content is displayed in a flex container
+    flex-direction: column; // Stack items vertically
+    padding: 10px; // Add padding around the content
+}
+
+input[type="text"] {
+    width: 100%; // Make the input take the full width
+    padding: 10px; // Add padding for better spacing
+    border: 1px solid #e5e7eb; // Add a border
+    border-radius: 5px; // Round the corners
+    margin-bottom: 10px; // Space between input and button
+    font-size: 14px; // Set font size
+    transition: border-color 0.3s; // Smooth transition for border color
+
+    &:focus {
+        border-color: #6b7280; // Change border color on focus
+        outline: none; // Remove default outline
+    }
+}
+
+button {
+    background-color: #a0aec0; // Set a calm, neutral background color for the button
+    color: white; // Set text color
+    padding: 10px; // Add padding
+    border: none; // Remove border
+    border-radius: 5px; // Round the corners
+    cursor: pointer; // Change cursor to pointer
+    transition: background-color 0.3s; // Smooth transition for background color
+
+    &:hover {
+        background-color: #636a72; // Calm neutral color for hover effect
     }
 }
 

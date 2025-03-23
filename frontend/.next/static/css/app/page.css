@@ -350,7 +350,7 @@
   border-style: solid;
   min-height: 100vh;
   position: relative;
-  transition: width 0.3s ease;
+  transition: width 0.4s ease;
 }
 .sidebar.minimized {
   width: 0px;
@@ -369,6 +369,7 @@
   cursor: pointer;
   border-radius: 50%;
   transition: transform 0.3s ease;
+  z-index: 1000;
 }
 .sidebar .minimize-button i {
   font-size: 14px;
@@ -404,6 +405,39 @@
 }
 .chat-history .chat-history-item:hover {
   background-color: #f0f0f0;
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+input[type=text] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+input[type=text]:focus {
+  border-color: #6b7280;
+  outline: none;
+}
+
+button {
+  background-color: #a0aec0;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+button:hover {
+  background-color: #636a72;
 }
 
 :root {

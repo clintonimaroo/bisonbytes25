@@ -29,6 +29,7 @@ export default function Sidebar() {
     };
 
     const toggleSidebar = () => {
+        console.log("toggleSidebar");
         setIsMinimized(!isMinimized);
     };
 
