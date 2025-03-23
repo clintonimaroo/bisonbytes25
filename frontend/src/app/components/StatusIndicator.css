@@ -1,0 +1,61 @@
+.status-indicator {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 8px 12px;
+    border-radius: 20px;
+    z-index: 1000;
+    font-size: 14px;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.status-text {
+    color: white;
+    font-weight: 500;
+}
+
+/* Status styles */
+.status-indicator.idle .status-dot {
+    background-color: #8e939c;
+}
+
+.status-indicator.wake-word-listening .status-dot {
+    background-color: #4caf50;
+    animation: pulse 1.5s infinite;
+}
+
+.status-indicator.listening .status-dot {
+    background-color: #f44336;
+    animation: pulse 1s infinite;
+}
+
+.status-indicator.generating .status-dot {
+    background-color: #2196f3;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

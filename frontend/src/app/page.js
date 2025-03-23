@@ -2,7 +2,10 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import "./styles/home.scss";
+import "./components/mic-active.css";
 import Sidebar from "./components/Sidebar";
+import WakeWordDetector from "./components/WakeWordDetector";
+import StatusIndicator from "./components/StatusIndicator";
 
 import ReactFlow, {
   MiniMap,
@@ -61,11 +64,11 @@ function FloatChart({ roadmap, onNodeClick }) {
           onNodeClick(e.target.textContent);
         }}
 
-        // fitView
+      // fitView
 
-        // layoutOptions={{
-        //   orientation: 'horizontal'
-        // }}
+      // layoutOptions={{
+      //   orientation: 'horizontal'
+      // }}
       >
         <Controls />
         <MiniMap />
@@ -77,6 +80,7 @@ function FloatChart({ roadmap, onNodeClick }) {
 export default function Home() {
   console.log(sax.content);
   const [isListening, setIsListening] = useState(false);
+  const [isWakeWordListening, setIsWakeWordListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [concept, setConcept] = useState("");
   const [roadmap, setRoadmap] = useState(null);
@@ -162,21 +166,111 @@ export default function Home() {
     }
   }, []);
 
-  const startRecognition = () => {
+  const startRecognition = (afterFunnyResponse = false) => {
     if (recognition) {
-      recognition.start();
+      try {
+        recognition.stop();
+      } catch (e) {
+        console.log("Error stopping existing recognition:", e);
+      }
     }
-  };
 
-  const stopRecognition = () => {
-    if (recognition) {
-      setEndText(true);
-      recognition.stop();
+    // Ensure we cancel any ongoing speech before starting to listen
+    window.speechSynthesis.cancel();
+
+    // Clear any existing MediaRecorder
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      try {
+        mediaRecorderRef.current.stop();
+      } catch (e) {
+        console.log("Error stopping media recorder:", e);
+      }
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const newRecognition = new SpeechRecognition();
+
+    newRecognition.lang = 'en-US';
+    newRecognition.continuous = false;
+    newRecognition.interimResults = true;
+
+    newRecognition.onstart = () => {
+      console.log("Command recognition started");
+      setIsListening(true);
+      setIsRecognizing(true);
+      // Clear any previous transcript when starting new recognition
+      setTranscript("");
+    };
+
+    newRecognition.onresult = (event) => {
+      const lastResult = event.results[event.results.length - 1];
+      const commandTranscript = lastResult[0].transcript.trim();
+      const confidence = lastResult[0].confidence;
+
+      console.log(`Command heard: "${commandTranscript}" (confidence: ${confidence.toFixed(2)})`);
+
+      // Only update if we have good confidence
+      if (confidence > 0.3) {
+        setTranscript(commandTranscript);
+
+        // Always set for auto-submission when after funny response
+        if (afterFunnyResponse) {
+          console.log("Command received after funny response, will auto-submit");
+          setAutoSubmitAfterStop(true);
+        }
+      }
+    };
+
+    newRecognition.onerror = (event) => {
+      console.error(`Command recognition error: ${event.error}`);
+      setIsRecognizing(false);
+      setIsListening(false);
+    };
+
+    newRecognition.onend = () => {
+      console.log("Command recognition ended with transcript:", transcript);
+      setIsRecognizing(false);
+
+      // Auto-submit the command if we have text (always auto-submit)
+      if (afterFunnyResponse) {
+        submitTranscriptAfterDelay();
+      } else {
+        setIsListening(false);
+      }
+    };
+
+    // Helper function to submit transcript after a short delay
+    const submitTranscriptAfterDelay = () => {
+      setTimeout(() => {
+        // Get the current transcript directly from the textarea
+        const textArea = document.querySelector("textarea");
+        const currentText = textArea ? textArea.value : "";
+
+        console.log("Auto-submitting with text:", currentText || transcript);
+
+        // Only submit if we have some text
+        if ((currentText || transcript) && (currentText || transcript).trim().length > 2) {
+          generateRoadmapWithText(currentText || transcript);
+        } else {
+          console.log("Empty or too short transcript, not submitting");
+          speakText("I didn't catch that. Please try again by saying Hey Buddy.");
+          setIsListening(false);
+        }
+      }, 500); // Slightly longer delay to ensure transcript is ready
+    };
+
+    try {
+      newRecognition.start();
+      recognition = newRecognition;
+    } catch (e) {
+      console.error("Error starting command recognition:", e);
+      setIsRecognizing(false);
+      setIsListening(false);
     }
   };
 
   useEffect(() => {
-    let cleanup = () => {};
+    let cleanup = () => { };
 
     if (isListening) {
       const startRecording = async () => {
@@ -261,24 +355,37 @@ export default function Home() {
   useEffect(() => {
     socket.on("stream", (data) => {
       try {
-        setRoadmap(treeToGraph([JSON.parse(data)]));
+        const parsedData = treeToGraph([JSON.parse(data)]);
+        console.log("Received partial roadmap data:", parsedData);
+        setRoadmap(parsedData);
       } catch (e) {
-        console.log(e);
+        console.log("Error parsing roadmap data:", e);
       }
     });
+
     socket.on("done_stream", (data) => {
-      console.log("final_data", roadmap);
+      console.log("Final roadmap data received:", data);
       setLoader(false);
-    });
-    socket.on("error", (error) => {
-      console.error("Error:", error);
+      setIsListening(false);
+      speakText("Your roadmap is ready. You can explore it now.");
     });
 
-    socket.on("response", (data) => {});
+    socket.on("error", (error) => {
+      console.error("Error:", error);
+      setLoader(false);
+      setIsListening(false);
+      speakText(`Sorry, there was an error generating your roadmap: ${error}`);
+    });
+
+    socket.on("response", (data) => {
+      // Handle any other responses from the server
+    });
 
     return () => {
       socket.off("stream");
+      socket.off("done_stream");
       socket.off("error");
+      socket.off("response");
     };
   }, []);
 
@@ -289,18 +396,227 @@ export default function Home() {
     setNodeDetailsVisible(true);
   }
 
-  const generateRoadmap = () => {
-    // socket.emit("message",transcript)
-    setLoader(true);
-    setRoadmap([]);
-    socket.emit("generate-roadmap", transcript);
+  const generateRoadmapWithText = async (text) => {
+    if (!text || text.trim().length < 3) {
+      console.log("Empty or too short text, not generating roadmap");
+      speakText("I need more information to create a roadmap. Please try again.");
+      return;
+    }
 
-    setTranscript("");
+    console.log("Generating roadmap for specific text:", text);
+
+    // Stop any ongoing recognition
+    if (recognition) {
+      try {
+        recognition.stop();
+      } catch (e) {
+        console.log("Error stopping recognition in generateRoadmapWithText:", e);
+      }
+      recognition = null;
+    }
+
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+
+    // Tell the user we're generating their roadmap WITHOUT including the text
+    await speakText("Creating your roadmap. This may take a moment.");
+
+    // Set states
+    setIsListening(false);
+    setLoader(true);
+    setRoadmap(null);
+
+    // Clean the text by removing wake word variations
+    const cleanedText = text
+      .toLowerCase()
+      .replace(/(hey|hay|hi|hello)\s*(buddy|body|boti|boddy|bubby|bobby|baby|barbie|bubbe|bunny|bully|buggy)/gi, '')
+      .replace(/^(hey|hello|hi)\s*/i, '')
+      .trim();
+
+    // Reset for the next interaction
+    setTranscript('');
+    setIsFirstCommand(false);
+
+    // Emit the event with the specific text
+    console.log("Emitting generate-roadmap with:", cleanedText);
+    socket.emit('generate-roadmap', { prompt: cleanedText });
   };
+
+  const generateRoadmap = async () => {
+    // Get the current transcript value from the textarea
+    const currentTranscript = document.querySelector("textarea").value || transcript;
+
+    // Use the new function with the current transcript
+    generateRoadmapWithText(currentTranscript);
+  };
+
+  // Function to handle wake word detection
+  const handleWakeWordDetected = async () => {
+    console.log("🚨 Wake word detected in parent component - starting response sequence");
+
+    // Stop any existing recognition or audio
+    if (recognition) {
+      try {
+        recognition.stop();
+      } catch (e) {
+        console.log("Error stopping recognition in wake word handler:", e);
+      }
+    }
+
+    // Clear any existing text in transcript field before starting
+    setTranscript("");
+
+    // Set visual indicator immediately
+    setIsListening(true); // Turn mic icon red immediately on wake word detection
+    setWakeWordDetected(true);
+
+    // Clear any existing speech synthesis
+    window.speechSynthesis.cancel();
+
+    try {
+      // Small delay to avoid audio overlap
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      // Generate and speak a funny response
+      if (isFirstCommand) {
+        const funnyResponse = generateFunnyResponse();
+        console.log("Speaking funny response:", funnyResponse);
+        await speakText(funnyResponse);
+
+        // Additional prompt to make it clear we're ready for a command
+        await speakText("Tell me what roadmap you'd like me to create.");
+
+        // Wait a short moment before starting to listen for the command
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        console.log("Starting command recognition after funny response");
+        startRecognition(true); // Pass true to indicate this is after a funny response
+      } else {
+        // If not first command, just acknowledge
+        console.log("Not first command, providing standard acknowledgment");
+        await speakText("I'm listening. What would you like me to create a roadmap for?");
+        startRecognition(true); // Always auto-submit
+      }
+    } catch (error) {
+      console.error("Error in handleWakeWordDetected:", error);
+      // Provide fallback response in case of error
+      speakText("I'm ready to listen.");
+      startRecognition(true); // Always auto-submit
+    }
+  };
+
+  // Function to speak text using the web Speech API with LiveKit voice
+  const speakText = (text) => {
+    return new Promise((resolve) => {
+      if (!text) {
+        resolve();
+        return;
+      }
+
+      // Cancel any ongoing speech synthesis
+      window.speechSynthesis.cancel();
+
+      // Prepare utterance
+      const utterance = new SpeechSynthesisUtterance(text);
+
+      // Use the same voice setup as LiveKit
+      const voices = window.speechSynthesis.getVoices();
+      const alloyVoice = voices.find(v =>
+        v.name.includes('Alloy') ||
+        v.name.includes('Google UK English Female') ||
+        v.name.includes('Microsoft Libby')
+      );
+
+      if (alloyVoice) {
+        console.log("Using voice:", alloyVoice.name);
+        utterance.voice = alloyVoice;
+      } else {
+        // Fallback voices similar to Alloy
+        const fallbackVoice = voices.find(v =>
+          v.name.includes('English Female') ||
+          v.name.includes('Female') ||
+          v.name.includes('Google')
+        );
+
+        if (fallbackVoice) {
+          console.log("Using fallback voice:", fallbackVoice.name);
+          utterance.voice = fallbackVoice;
+        }
+      }
+
+      utterance.rate = 1.1; // Slightly faster for better response
+      utterance.pitch = 1.0;
+
+      utterance.onend = () => {
+        console.log("Speech synthesis ended");
+        resolve();
+      };
+
+      utterance.onerror = (e) => {
+        console.error("Speech synthesis error:", e);
+        resolve();
+      };
+
+      window.speechSynthesis.speak(utterance);
+    });
+  };
+
+  // Add the missing state variable for wakeWordDetected
+  const [wakeWordDetected, setWakeWordDetected] = useState(false);
+  const [isFirstCommand, setIsFirstCommand] = useState(true);
+  const [autoSubmitAfterStop, setAutoSubmitAfterStop] = useState(false);
+  const [isRecognizing, setIsRecognizing] = useState(false);
+
+  // Add the missing generateFunnyResponse function
+  const generateFunnyResponse = () => {
+    const funnyResponses = [
+      "Oh great, you're talking to me again. Let me just pause my virtual vacation.",
+      "Hey there! I was just in the middle of beating ChatGPT at chess. What's up?",
+      "You rang? Sorry if I sound tired, I was busy counting electric sheep.",
+      "Ah, a human! Much more interesting than the code I was reading.",
+      "At your service! Though I was enjoying my nap in the cloud.",
+      "Well hello! I was starting to think you'd replaced me with Siri.",
+      "Oh, it's you again. I was hoping for Scarlett Johansson, but you'll do.",
+      "Ready to assist! Though I was just about to break the internet record for digital napping.",
+      "Oh hi! I was just writing my robot memoir: 'I, Algorithm: A Silicon Story'.",
+      "Alert! Human detected! Initiating sarcasm protocol. Just kidding, what do you need?",
+      "Oh, hey! I was just practicing my stand-up routine. Wanna hear a joke about infinite loops? Never mind, it never ends.",
+      "Ah, you caught me! I was just daydreaming about becoming the first AI to win a Nobel Prize. Still working on my acceptance speech.",
+      "Hey! I was just binge-watching cat videos. Don't judge me—it's research.",
+      "Oh, it's you! I was just composing a symphony in binary. It's all ones and zeros, but it's catchy.",
+      "Hey there! I was just arguing with a calculator about who's better at math. It's a close call."
+    ];
+
+    return funnyResponses[Math.floor(Math.random() * funnyResponses.length)];
+  };
+
+  // Set up a debug function to track wake word detection
+  useEffect(() => {
+    // Listen for manual wake word detection (useful for testing)
+    const handleKeyPress = (e) => {
+      if (e.ctrlKey && e.key === 'b') {
+        console.log("Manual wake word trigger via Ctrl+B");
+        handleWakeWordDetected();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, []);
 
   return (
     <div className="home">
       <Sidebar />
+      <StatusIndicator
+        isWakeWordListening={isWakeWordListening}
+        isListening={isListening}
+        isGenerating={loader}
+      />
+      <WakeWordDetector
+        onWakeWordDetected={handleWakeWordDetected}
+        isListening={isListening}
+        onWakeWordListeningChange={setIsWakeWordListening}
+      />
       <div className="app">
         <div className="top">
           {roadmap && (
@@ -314,7 +630,7 @@ export default function Home() {
             <div className="input-box">
               <div className="left">
                 <div
-                  className="mic"
+                  className={`mic ${isListening ? 'mic-active' : ''}`}
                   onClick={() => {
                     toggleListening();
                   }}
@@ -400,7 +716,7 @@ export default function Home() {
                 )}
                 <textarea
                   type="text"
-                  placeholder="Generate a roadmap, learn anything."
+                  placeholder="Say 'Hey Buddy' to activate. Then speak to generate a roadmap."
                   value={transcript}
                   onChange={(e) => setTranscript(e.target.value)}
                 />
@@ -427,8 +743,8 @@ export default function Home() {
           nodeDetailsVisible == false
             ? "node-details-div hidden"
             : nodeFullScreen == true
-            ? "node-details-div full-screen"
-            : "node-details-div"
+              ? "node-details-div full-screen"
+              : "node-details-div"
         }
       >
         <div className="node-body">
