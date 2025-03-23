@@ -413,6 +413,12 @@
   padding: 10px;
 }
 
+.sidebar-content-item-search {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
 input[type=text] {
   width: 100%;
   padding: 10px;

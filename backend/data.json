@@ -1,187 +1,127 @@
 
+  {
+  "title": "Introduction to Sound Production with Mixers",
+  "children": [
+    {
+      "title": "Basic Concepts",
+      "children": [
         {
-          "title": "Getting Started with Music Production",
+          "title": "What is Sound Production?",
+          "children": []
+        },
+        {
+          "title": "Understanding Mixers",
           "children": [
             {
-              "title": "Fundamental Concepts",
+              "title": "Types of Mixers",
               "children": [
                 {
-                  "title": "Introduction to Music Production",
-                  "children": [
-                    {
-                      "title": "The DAW (Digital Audio Workstation)",
-                      "children": [
-                        {
-                          "title": "Understanding the Interface",
-                          "children": []
-                        },
-                        {
-                          "title": "Basic Functionalities",
-                          "children": []
-                        }
-                      ]
-                    },
-                    {
-                      "title": "Audio Basics",
-                      "children": [
-                        {
-                          "title": "What is Sound?",
-                          "children": []
-                        },
-                        {
-                          "title": "Digital vs Analog",
-                          "children": []
-                        }
-                      ]
-                    },
-                    {
-                      "title": "MIDI Basics",
-                      "children": [
-                        {
-                          "title": "What is MIDI?",
-                          "children": []
-                        },
-                        {
-                          "title": "MIDI Controllers",
-                          "children": []
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "title": "Core Music Production Skills",
-              "children": [
-                {
-                  "title": "Recording Techniques",
-                  "children": [
-                    {
-                      "title": "Setting Up Your Studio",
-                      "children": [
-                        {
-                          "title": "Choosing the Right Equipment",
-                          "children": []
-                        },
-                        {
-                          "title": "Acoustic Treatment",
-                          "children": []
-                        }
-                      ]
-                    },
-                    {
-                      "title": "Microphone Techniques",
-                      "children": []
-                    },
-                    {
-                      "title": "Recording Software Basics",
-                      "children": []
-                    }
-                  ]
+                  "title": "Analog Mixers",
+                  "children": []
                 },
                 {
-                  "title": "Sound Design",
-                  "children": [
-                    {
-                      "title": "Synthesis Basics",
-                      "children": []
-                    },
-                    {
-                      "title": "Using Samplers",
-                      "children": []
-                    }
-                  ]
-                },
-                {
-                  "title": "Mixing",
-                  "children": [
-                    {
-                      "title": "EQ and Compression",
-                      "children": []
-                    },
-                    {
-                      "title": "Using Reverb and Delay",
-                      "children": []
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "title": "Advanced Music Production Techniques",
-              "children": [
-                {
-                  "title": "Advanced Mixing",
-                  "children": [
-                    {
-                      "title": "Stereo Imaging",
-                      "children": []
-                    },
-                    {
-                      "title": "Automation Techniques",
-                      "children": []
-                    }
-                  ]
-                },
-                {
-                  "title": "Mastering",
-                  "children": [
-                    {
-                      "title": "Loudness and Dynamics",
-                      "children": []
-                    },
-                    {
-                      "title": "Finalizing Your Track",
-                      "children": []
-                    }
-                  ]
-                },
-                {
-                  "title": "Music Arrangement",
-                  "children": [
-                    {
-                      "title": "Song Structure",
-                      "children": []
-                    },
-                    {
-                      "title": "Creating Transitions",
-                      "children": []
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "title": "Final Steps and Music Distribution",
-              "children": [
-                {
-                  "title": "Preparing Your Final Mix",
-                  "children": [
-                    {
-                      "title": "Exporting Tracks",
-                      "children": []
-                    },
-                    {
-                      "title": "Quality Control",
-                      "children": []
-                    }
-                  ]
-                },
-                {
-                  "title": "Music Distribution",
-                  "children": [
-                    {
-                      "title": "Online Distribution Platforms",
-                      "children": []
-                    },
-                    {
-                      "title": "Promoting Your Music",
-                      "children": []
-                    }
-                  ]
+                  "title": "Digital Mixers",
+                  "children": []
                 }
               ]
             }
           ]
+        },
+        {
+          "title": "Signal Flow",
+          "children": []
         }
+      ]
+    },
+    {
+      "title": "Mixing Techniques",
+      "children": [
+        {
+          "title": "Gain Staging",
+          "children": []
+        },
+        {
+          "title": "EQ (Equalization)",
+          "children": []
+        },
+        {
+          "title": "Compression",
+          "children": []
+        },
+        {
+          "title": "Panning",
+          "children": []
+        }
+      ]
+    },
+    {
+      "title": "Advanced Mixing Concepts",
+      "children": [
+        {
+          "title": "Effects Processing",
+          "children": [
+            {
+              "title": "Reverb",
+              "children": []
+            },
+            {
+              "title": "Delay",
+              "children": []
+            },
+            {
+              "title": "Chorus and Flanging",
+              "children": []
+            }
+          ]
+        },
+        {
+          "title": "Automation Techniques",
+          "children": []
+        },
+        {
+          "title": "Mix Bus Processing",
+          "children": []
+        }
+      ]
+    },
+    {
+      "title": "Practical Projects",
+      "children": [
+        {
+          "title": "Live Sound Mixing",
+          "children": []
+        },
+        {
+          "title": "Studio Recording Session",
+          "children": []
+        }
+      ]
+    },
+    {
+      "title": "Mastering Sound Production",
+      "children": [
+        {
+          "title": "Critical Listening Skills",
+          "children": []
+        },
+        {
+          "title": "Mix Review and Feedback",
+          "children": []
+        },
+        {
+          "title": "Continuous Learning",
+          "children": [
+            {
+              "title": "Online Communities and Forums",
+              "children": []
+            },
+            {
+              "title": "Workshops and Conferences",
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

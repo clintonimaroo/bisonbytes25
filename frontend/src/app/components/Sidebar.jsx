@@ -93,18 +93,20 @@ export default function Sidebar() {
             <div className="sidebar-content">
                 <div className="sidebar-content-item">
                   {/* Chat History Search */}
-                <input 
-                    type="text" 
-                    placeholder="Search chats..." 
-                    value={searchQuery} 
-                    onChange={handleSearchChange} // Handle input change
-                />
-                <button 
-                    onClick={() => {handleSearch()}}
-                    aria-label="search button"
-                >
-                        <i className="fas fa-search"></i>
-                </button>
+                  <div className="sidebar-content-item-search">
+                    <input 
+                        type="text" 
+                        placeholder="Search chats..." 
+                        value={searchQuery} 
+                        onChange={handleSearchChange} // Handle input change
+                    />
+                    <button 
+                        onClick={() => {handleSearch()}}
+                        aria-label="search button"
+                    >
+                            <i className="fas fa-search"></i>
+                    </button>
+                  </div>
                     {/** Chat History */}
                     <div className="chat-history">
 

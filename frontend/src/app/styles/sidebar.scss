@@ -79,6 +79,12 @@ $border-color: #e5e7eb;
     padding: 10px; // Add padding around the content
 }
 
+.sidebar-content-item-search {
+    display: flex; // Align input and button in a row
+    align-items: center; // Center items vertically
+    margin-bottom: 10px; // Space between input/button and chat history
+}
+
 input[type="text"] {
     width: 100%; // Make the input take the full width
     padding: 10px; // Add padding for better spacing
